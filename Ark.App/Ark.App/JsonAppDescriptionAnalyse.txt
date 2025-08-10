@@ -1,0 +1,619 @@
+﻿//{
+//    {
+//        "id": 10000,
+//        "title-fr": "Processus High-Level pour la Réalisation d'une Solution Informatique sur Mesure",
+//        "title-en": "High-Level Process for Developing a Custom IT Solution",
+//        "sections": [
+//            {
+//                "id": 1000010000,
+//                "title-fr": "Demande Initiale et Analyse des Besoins",
+//                "title-en": "Initial Request and Needs Analysis",
+//                "parent_id": 10000,
+//                "content-fr": "Définir clairement les besoins et les objectifs du projet.",
+//                "content-en": "Clearly define the needs and objectives of the project.",
+//                "subsections": [
+
+//                    {
+//                        "id": 100001000010000,
+//                        "title-fr": "Description du projet",
+//                        "title-en": "Project Description",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Objectifs principaux, contexte, portée.",
+//                        "content-en": "Main objectives, context, scope.",
+//                        "subsections": [
+//                            {
+//                                "id": 1000010000100010000,
+//                                "title-fr": "Contexte de l'activité",
+//                                "title-en": "Activity Context",
+//                                "parent_id": 100001000010000,
+//                                "content-fr": "Veuillez sélectionner le contexte de l'activité de l'entreprise.",
+//                                "content-en": "Please select the business activity context.",
+//                                "enum": "activity_context"
+//                            },
+//                            {
+//                                "id": 1000010000100010100,
+//                                "title-fr": "Type de produit",
+//                                "title-en": "Product Type",
+//                                "parent_id": 1000010000100010000,
+//                                "content-fr": "Veuillez sélectionner le type de produit logiciel.",
+//                                "content-en": "Please select the type of software product.",
+//                                "enum": "product_type"
+//                            },
+//                            {
+//                                "id": 1000010000100010200,
+//                                "title-fr": "Public cible",
+//                                "title-en": "Target Audience",
+//                                "parent_id": 1000010000100010000,
+//                                "content-fr": "Veuillez sélectionner le public cible principal du produit.",
+//                                "content-en": "Please select the primary target audience of the product.",
+//                                "enum": "target_audience"
+//                            }
+//                        ]
+//                    },
+
+//                    {
+//                        "id": 100001000010100,
+//                        "title-fr": "Besoins fonctionnels",
+//                        "title-en": "Functional Requirements",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Liste détaillée des fonctionnalités souhaitées.",
+//                        "content-en": "Detailed list of desired features."
+//                    },
+//                    {
+//                        "id": 100001000010200,
+//                        "title-fr": "Contraintes et exigences",
+//                        "title-en": "Constraints and Requirements",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Techniques, réglementaires, budgétaires, délais.",
+//                        "content-en": "Technical, regulatory, budgetary, deadlines."
+//                    },
+//                    {
+//                        "id": 100001000010300,
+//                        "title-fr": "Utilisateurs cibles",
+//                        "title-en": "Target Users",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Description des utilisateurs finaux et de leurs besoins spécifiques.",
+//                        "content-en": "Description of end users and their specific needs."
+//                    },
+//                    {
+//                        "id": 100001000010400,
+//                        "title-fr": "Priorités",
+//                        "title-en": "Priorities",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Fonctionnalités essentielles vs secondaires, livrables prioritaires.",
+//                        "content-en": "Essential vs secondary features, priority deliverables."
+//                    },
+//                    {
+//                        "id": 100001000010500,
+//                        "title-fr": "Évaluation initiale du budget et des ressources",
+//                        "title-en": "Initial Budget and Resource Assessment",
+//                        "parent_id": 1000010000,
+//                        "content-fr": "Estimations préliminaires des coûts et des ressources nécessaires.",
+//                        "content-en": "Preliminary estimates of costs and necessary resources."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000020000,
+//                "title-fr": "Analyse Fonctionnelle Détaillée",
+//                "title-en": "Detailed Functional Analysis",
+//                "parent_id": 10000,
+//                "content-fr": "Traduire les besoins en spécifications fonctionnelles détaillées.",
+//                "content-en": "Translate needs into detailed functional specifications.",
+//                "subsections": [
+//                    {
+//                        "id": 100002000010000,
+//                        "title-fr": "Diagrammes de cas d'utilisation",
+//                        "title-en": "Use Case Diagrams",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Visualisation des interactions entre les utilisateurs et le système.",
+//                        "content-en": "Visualization of interactions between users and the system."
+//                    },
+//                    {
+//                        "id": 100002000010100,
+//                        "title-fr": "Description détaillée des fonctionnalités",
+//                        "title-en": "Detailed Description of Features",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Pour chaque fonctionnalité, détailler les entrées, les sorties, les processus.",
+//                        "content-en": "For each feature, detail the inputs, outputs, processes."
+//                    },
+//                    {
+//                        "id": 100002000010200,
+//                        "title-fr": "Scénarios d'utilisation",
+//                        "title-en": "Usage Scenarios",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Exemples concrets de l'utilisation du système.",
+//                        "content-en": "Concrete examples of system usage."
+//                    },
+//                    {
+//                        "id": 100002000010300,
+//                        "title-fr": "Wireframes et maquettes",
+//                        "title-en": "Wireframes and Mockups",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Représentations visuelles des interfaces utilisateur.",
+//                        "content-en": "Visual representations of user interfaces."
+//                    },
+//                    {
+//                        "id": 100002000010400,
+//                        "title-fr": "Critères de performance",
+//                        "title-en": "Performance Criteria",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Exigences en termes de vitesse, de capacité, de disponibilité.",
+//                        "content-en": "Requirements in terms of speed, capacity, availability."
+//                    },
+//                    {
+//                        "id": 100002000010500,
+//                        "title-fr": "Exigences de sécurité",
+//                        "title-en": "Security Requirements",
+//                        "parent_id": 1000020000,
+//                        "content-fr": "Normes et protocoles de sécurité à respecter.",
+//                        "content-en": "Security standards and protocols to be followed."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000030000,
+//                "title-fr": "Étude Technique Préliminaire",
+//                "title-en": "Preliminary Technical Study",
+//                "parent_id": 10000,
+//                "content-fr": "Évaluer la faisabilité technique et définir les technologies à utiliser.",
+//                "content-en": "Assess technical feasibility and define the technologies to be used.",
+//                "subsections": [
+//                    {
+//                        "id": 100003000010000,
+//                        "title-fr": "Architecture système",
+//                        "title-en": "System Architecture",
+//                        "parent_id": 1000030000,
+//                        "content-fr": "Diagrammes de haut niveau des composants principaux et de leurs interactions.",
+//                        "content-en": "High-level diagrams of main components and their interactions."
+//                    },
+//                    {
+//                        "id": 100003000010100,
+//                        "title-fr": "Technologies et outils",
+//                        "title-en": "Technologies and Tools",
+//                        "parent_id": 1000030000,
+//                        "content-fr": "Liste des technologies recommandées (langages de programmation, frameworks, bases de données).",
+//                        "content-en": "List of recommended technologies (programming languages, frameworks, databases)."
+//                    },
+//                    {
+//                        "id": 100003000010200,
+//                        "title-fr": "Évaluation des risques techniques",
+//                        "title-en": "Technical Risk Assessment",
+//                        "parent_id": 1000030000,
+//                        "content-fr": "Identification des défis techniques potentiels et des solutions possibles.",
+//                        "content-en": "Identification of potential technical challenges and possible solutions."
+//                    },
+//                    {
+//                        "id": 100003000010300,
+//                        "title-fr": "Prototypage rapide",
+//                        "title-en": "Rapid Prototyping",
+//                        "parent_id": 1000030000,
+//                        "content-fr": "Création de prototypes pour valider les choix techniques et obtenir des retours préliminaires.",
+//                        "content-en": "Creating prototypes to validate technical choices and obtain preliminary feedback."
+//                    },
+//                    {
+//                        "id": 100003000010400,
+//                        "title-fr": "Plan de migration",
+//                        "title-en": "Migration Plan",
+//                        "parent_id": 1000030000,
+//                        "content-fr": "Si applicable, description du processus de migration des systèmes existants vers la nouvelle solution.",
+//                        "content-en": "If applicable, description of the process for migrating existing systems to the new solution."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000040000,
+//                "title-fr": "Planification et Estimation du Budget",
+//                "title-en": "Planning and Budget Estimation",
+//                "parent_id": 10000,
+//                "content-fr": "Établir un plan de projet détaillé et affiner les estimations budgétaires.",
+//                "content-en": "Establish a detailed project plan and refine budget estimates.",
+//                "subsections": [
+//                    {
+//                        "id": 100004000010000,
+//                        "title-fr": "Décomposition du projet en tâches",
+//                        "title-en": "Project Task Breakdown",
+//                        "parent_id": 1000040000,
+//                        "content-fr": "Liste des tâches et sous-tâches nécessaires à la réalisation du projet.",
+//                        "content-en": "List of tasks and sub-tasks required to complete the project."
+//                    },
+//                    {
+//                        "id": 100004000010100,
+//                        "title-fr": "Chronogramme",
+//                        "title-en": "Timeline",
+//                        "parent_id": 1000040000,
+//                        "content-fr": "Calendrier détaillé avec des jalons clés et des dates de livraison.",
+//                        "content-en": "Detailed schedule with key milestones and delivery dates."
+//                    },
+//                    {
+//                        "id": 100004000010200,
+//                        "title-fr": "Ressources nécessaires",
+//                        "title-en": "Required Resources",
+//                        "parent_id": 1000040000,
+//                        "content-fr": "Équipe projet (rôles et responsabilités), outils et infrastructures.",
+//                        "content-en": "Project team (roles and responsibilities), tools and infrastructure."
+//                    },
+//                    {
+//                        "id": 100004000010300,
+//                        "title-fr": "Estimation des coûts",
+//                        "title-en": "Cost Estimation",
+//                        "parent_id": 1000040000,
+//                        "content-fr": "Budget détaillé couvrant les coûts de développement, de test, de déploiement et de maintenance.",
+//                        "content-en": "Detailed budget covering development, testing, deployment, and maintenance costs."
+//                    },
+//                    {
+//                        "id": 100004000010400,
+//                        "title-fr": "Plan de gestion des risques",
+//                        "title-en": "Risk Management Plan",
+//                        "parent_id": 1000040000,
+//                        "content-fr": "Stratégies pour identifier, évaluer et atténuer les risques du projet.",
+//                        "content-en": "Strategies to identify, assess, and mitigate project risks."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000050000,
+//                "title-fr": "Rédaction des Spécifications Techniques",
+//                "title-en": "Technical Specifications Drafting",
+//                "parent_id": 10000,
+//                "content-fr": "Fournir une documentation technique complète pour guider le développement.",
+//                "content-en": "Provide comprehensive technical documentation to guide development.",
+//                "subsections": [
+//                    {
+//                        "id": 100005000010000,
+//                        "title-fr": "Spécifications des composants logiciels",
+//                        "title-en": "Software Component Specifications",
+//                        "parent_id": 1000050000,
+//                        "content-fr": "Description détaillée de chaque composant du système.",
+//                        "content-en": "Detailed description of each system component."
+//                    },
+//                    {
+//                        "id": 100005000010100,
+//                        "title-fr": "Interfaces et API",
+//                        "title-en": "Interfaces and APIs",
+//                        "parent_id": 1000050000,
+//                        "content-fr": "Définition des interfaces et des points d'intégration entre les composants.",
+//                        "content-en": "Definition of interfaces and integration points between components."
+//                    },
+//                    {
+//                        "id": 100005000010200,
+//                        "title-fr": "Modèles de données",
+//                        "title-en": "Data Models",
+//                        "parent_id": 1000050000,
+//                        "content-fr": "Schémas de base de données et structures de données.",
+//                        "content-en": "Database schemas and data structures."
+//                    },
+//                    {
+//                        "id": 100005000010300,
+//                        "title-fr": "Protocole de communication",
+//                        "title-en": "Communication Protocol",
+//                        "parent_id": 1000050000,
+//                        "content-fr": "Description des protocoles de communication entre les composants.",
+//                        "content-en": "Description of communication protocols between components."
+//                    },
+//                    {
+//                        "id": 100005000010400,
+//                        "title-fr": "Normes de codage",
+//                        "title-en": "Coding Standards",
+//                        "parent_id": 1000050000,
+//                        "content-fr": "Directives sur les pratiques de codage et les conventions à suivre.",
+//                        "content-en": "Guidelines on coding practices and conventions to follow."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000060000,
+//                "title-fr": "Développement et Tests",
+//                "title-en": "Development and Testing",
+//                "parent_id": 10000,
+//                "content-fr": "Construire le système conformément aux spécifications techniques et assurer sa qualité.",
+//                "content-en": "Build the system according to technical specifications and ensure its quality.",
+//                "subsections": [
+//                    {
+//                        "id": 100006000010000,
+//                        "title-fr": "Développement itératif",
+//                        "title-en": "Iterative Development",
+//                        "parent_id": 1000060000,
+//                        "content-fr": "Processus de développement par itérations avec des livraisons incrémentales.",
+//                        "content-en": "Iterative development process with incremental deliveries."
+//                    },
+//                    {
+//                        "id": 100006000010100,
+//                        "title-fr": "Tests unitaires et d'intégration",
+//                        "title-en": "Unit and Integration Testing",
+//                        "parent_id": 1000060000,
+//                        "content-fr": "Planification et exécution des tests pour valider les composants individuels et leurs interactions.",
+//                        "content-en": "Planning and execution of tests to validate individual components and their interactions."
+//                    },
+//                    {
+//                        "id": 100006000010200,
+//                        "title-fr": "Tests fonctionnels et de performance",
+//                        "title-en": "Functional and Performance Testing",
+//                        "parent_id": 1000060000,
+//                        "content-fr": "Validation des fonctionnalités globales et des performances du système.",
+//                        "content-en": "Validation of overall system functionality and performance."
+//                    },
+//                    {
+//                        "id": 100006000010300,
+//                        "title-fr": "Correction des bugs et améliorations",
+//                        "title-en": "Bug Fixing and Improvements",
+//                        "parent_id": 1000060000,
+//                        "content-fr": "Suivi des anomalies et mise en œuvre des corrections et améliorations nécessaires.",
+//                        "content-en": "Tracking anomalies and implementing necessary fixes and improvements."
+//                    }
+//                ]
+//            },
+//            {
+//                "id": 1000070000,
+//                "title-fr": "Déploiement et Maintenance",
+//                "title-en": "Deployment and Maintenance",
+//                "parent_id": 10000,
+//                "content-fr": "Mettre en production la solution et assurer son maintien en conditions opérationnelles.",
+//                "content-en": "Deploy the solution and ensure it remains operational.",
+//                "subsections": [
+//                    {
+//                        "id": 100007000010000,
+//                        "title-fr": "Plan de déploiement",
+//                        "title-en": "Deployment Plan",
+//                        "parent_id": 1000070000,
+//                        "content-fr": "Stratégie de mise en production, y compris les étapes et les responsabilités.",
+//                        "content-en": "Deployment strategy, including steps and responsibilities."
+//                    },
+//                    {
+//                        "id": 100007000010100,
+//                        "title-fr": "Documentation utilisateur",
+//                        "title-en": "User Documentation",
+//                        "parent_id": 1000070000,
+//                        "content-fr": "Guides et manuels pour les utilisateurs finaux et les administrateurs.",
+//                        "content-en": "Guides and manuals for end users and administrators."
+//                    },
+//                    {
+//                        "id": 100007000010200,
+//                        "title-fr": "Formation",
+//                        "title-en": "Training",
+//                        "parent_id": 1000070000,
+//                        "content-fr": "Programmes de formation pour les utilisateurs et le personnel de support.",
+//                        "content-en": "Training programs for users and support staff."
+//                    },
+//                    {
+//                        "id": 100007000010300,
+//                        "title-fr": "Support et maintenance",
+//                        "title-en": "Support and Maintenance",
+//                        "parent_id": 1000070000,
+//                        "content-fr": "Plan de support post-déploiement, y compris les SLA et les procédures de gestion des incidents.",
+//                        "content-en": "Post-deployment support plan, including SLAs and incident management procedures."
+//                    },
+//                    {
+//                        "id": 100007000010400,
+//                        "title-fr": "Améliorations continues",
+//                        "title-en": "Continuous Improvements",
+//                        "parent_id": 1000070000,
+//                        "content-fr": "Processus pour recueillir les retours utilisateurs et intégrer les améliorations dans les versions futures.",
+//                        "content-en": "Process to gather user feedback and integrate improvements into future versions."
+//                    }
+//                ]
+//            }
+//        ]
+//    },
+
+
+//    {
+//        "enums": {
+//            "activity_context": {
+//                "1": {
+//                    "valeur-fr": "Industrielle",
+//                    "valeur-en": "Industrial",
+//                    "description-fr": "Entreprise orientée vers la production industrielle.",
+//                    "description-en": "Company focused on industrial production."
+//                },
+//                "2": {
+//                    "valeur-fr": "Logistique",
+//                    "valeur-en": "Logistics",
+//                    "description-fr": "Entreprise spécialisée dans la gestion de la chaîne d'approvisionnement.",
+//                    "description-en": "Company specializing in supply chain management."
+//                },
+//                "3": {
+//                    "valeur-fr": "Hôpital",
+//                    "valeur-en": "Hospital",
+//                    "description-fr": "Établissement de soins de santé.",
+//                    "description-en": "Healthcare facility."
+//                },
+//                "4": {
+//                    "valeur-fr": "Divertissement",
+//                    "valeur-en": "Entertainment",
+//                    "description-fr": "Entreprise dans l'industrie du divertissement.",
+//                    "description-en": "Company in the entertainment industry."
+//                },
+//                "5": {
+//                    "valeur-fr": "Logiciel",
+//                    "valeur-en": "Software",
+//                    "description-fr": "Entreprise spécialisée dans le développement de logiciels.",
+//                    "description-en": "Company specializing in software development."
+//                }
+//            },
+//            "product_type": {
+//                "industrial": {
+//                    "1": {
+//                        "valeur-fr": "ERP",
+//                        "valeur-en": "ERP",
+//                        "description-fr": "Système de planification des ressources d'entreprise.",
+//                        "description-en": "Enterprise resource planning system."
+//                    },
+//                    "2": {
+//                        "valeur-fr": "SCM",
+//                        "valeur-en": "SCM",
+//                        "description-fr": "Système de gestion de la chaîne d'approvisionnement.",
+//                        "description-en": "Supply chain management system."
+//                    },
+//                    "3": {
+//                        "valeur-fr": "PLM",
+//                        "valeur-en": "PLM",
+//                        "description-fr": "Système de gestion du cycle de vie des produits.",
+//                        "description-en": "Product lifecycle management system."
+//                    },
+//                    "4": {
+//                        "valeur-fr": "Système d'Intégration",
+//                        "valeur-en": "Integration System",
+//                        "description-fr": "Système d'échange de données entre différentes plateformes.",
+//                        "description-en": "Data exchange system between different platforms."
+//                    },
+//                    "5": {
+//                        "valeur-fr": "Flux de Données",
+//                        "valeur-en": "Data Flow",
+//                        "description-fr": "Réalisation d'un flux de données d'échange entre deux plateformes.",
+//                        "description-en": "Implementation of a data exchange flow between two platforms."
+//                    },
+//                    "6": {
+//                        "valeur-fr": "HRM",
+//                        "valeur-en": "HRM",
+//                        "description-fr": "Système de gestion des ressources humaines.",
+//                        "description-en": "Human resource management system."
+//                    },
+//                    "7": {
+//                        "valeur-fr": "Système Financier",
+//                        "valeur-en": "Finance System",
+//                        "description-fr": "Système de gestion financière.",
+//                        "description-en": "Financial management system."
+//                    },
+//                    "8": {
+//                        "valeur-fr": "Surveillance",
+//                        "valeur-en": "Monitoring",
+//                        "description-fr": "Système de surveillance des opérations et des performances.",
+//                        "description-en": "System for monitoring operations and performance."
+//                    }
+//                },
+//                "logistics": {
+//                    "1": {
+//                        "valeur-fr": "TMS",
+//                        "valeur-en": "TMS",
+//                        "description-fr": "Système de gestion des transports.",
+//                        "description-en": "Transportation management system."
+//                    },
+//                    "2": {
+//                        "valeur-fr": "WMS",
+//                        "valeur-en": "WMS",
+//                        "description-fr": "Système de gestion d'entrepôt.",
+//                        "description-en": "Warehouse management system."
+//                    },
+//                    "3": {
+//                        "valeur-fr": "Système d'Intégration",
+//                        "valeur-en": "Integration System",
+//                        "description-fr": "Système d'échange de données entre différentes plateformes.",
+//                        "description-en": "Data exchange system between different platforms."
+//                    },
+//                    "4": {
+//                        "valeur-fr": "Flux de Données",
+//                        "valeur-en": "Data Flow",
+//                        "description-fr": "Réalisation d'un flux de données d'échange entre deux plateformes.",
+//                        "description-en": "Implementation of a data exchange flow between two platforms."
+//                    },
+//                    "5": {
+//                        "valeur-fr": "HRM",
+//                        "valeur-en": "HRM",
+//                        "description-fr": "Système de gestion des ressources humaines.",
+//                        "description-en": "Human resource management system."
+//                    },
+//                    "6": {
+//                        "valeur-fr": "Système Financier",
+//                        "valeur-en": "Finance System",
+//                        "description-fr": "Système de gestion financière.",
+//                        "description-en": "Financial management system."
+//                    },
+//                    "7": {
+//                        "valeur-fr": "Surveillance",
+//                        "valeur-en": "Monitoring",
+//                        "description-fr": "Système de surveillance des opérations et des performances.",
+//                        "description-en": "System for monitoring operations and performance."
+//                    }
+//                },
+//                "hospital": {
+//                    "1": {
+//                        "valeur-fr": "Dossier Patient Informatisé",
+//                        "valeur-en": "Electronic Health Record",
+//                        "description-fr": "Système de gestion des dossiers médicaux des patients.",
+//                        "description-en": "System for managing patients' medical records."
+//                    },
+//                    "2": {
+//                        "valeur-fr": "Système de Gestion des Laboratoires",
+//                        "valeur-en": "Laboratory Information Management System",
+//                        "description-fr": "Système de gestion des informations de laboratoire.",
+//                        "description-en": "System for managing laboratory information."
+//                    }
+//                },
+//                "entertainment": {
+//                    "1": {
+//                        "valeur-fr": "Plateforme de Streaming",
+//                        "valeur-en": "Streaming Platform",
+//                        "description-fr": "Service de diffusion de contenu multimédia.",
+//                        "description-en": "Service for streaming multimedia content."
+//                    },
+//                    "2": {
+//                        "valeur-fr": "Jeux en Ligne",
+//                        "valeur-en": "Online Games",
+//                        "description-fr": "Plateforme de jeux vidéo en ligne.",
+//                        "description-en": "Platform for online video games."
+//                    },
+//                    "3": {
+//                        "valeur-fr": "Réseaux Sociaux",
+//                        "valeur-en": "Social Media",
+//                        "description-fr": "Plateforme pour interagir et partager du contenu avec d'autres utilisateurs.",
+//                        "description-en": "Platform for interacting and sharing content with other users."
+//                    },
+//                    "4": {
+//                        "valeur-fr": "Gestion d'Événements",
+//                        "valeur-en": "Event Management",
+//                        "description-fr": "Système pour planifier et gérer des événements.",
+//                        "description-en": "System for planning and managing events."
+//                    }
+//                },
+//                "software": {
+//                    "1": {
+//                        "valeur-fr": "Application de Gestion de Projet",
+//                        "valeur-en": "Project Management Software",
+//                        "description-fr": "Outil pour planifier, exécuter et suivre les projets.",
+//                        "description-en": "Tool for planning, executing, and tracking projects."
+//                    },
+//                    "2": {
+//                        "valeur-fr": "Outil de Développement",
+//                        "valeur-en": "Development Tool",
+//                        "description-fr": "Logiciel pour le développement d'applications.",
+//                        "description-en": "Software for developing applications."
+//                    }
+//                }
+//            },
+//            "target_audience": {
+//                "1": {
+//                    "valeur-fr": "Entreprise",
+//                    "valeur-en": "Business",
+//                    "description-fr": "Logiciel destiné à une utilisation par des entreprises.",
+//                    "description-en": "Software intended for use by businesses."
+//                },
+//                "2": {
+//                    "valeur-fr": "Clients",
+//                    "valeur-en": "Clients",
+//                    "description-fr": "Logiciel destiné à être utilisé par les clients de l'entreprise.",
+//                    "description-en": "Software intended for use by the company's clients."
+//                },
+//                "3": {
+//                    "valeur-fr": "Chercheurs",
+//                    "valeur-en": "Researchers",
+//                    "description-fr": "Logiciel destiné à un usage par des chercheurs pour des activités de recherche.",
+//                    "description-en": "Software intended for use by researchers for research activities."
+//                },
+//                "4": {
+//                    "valeur-fr": "Public général",
+//                    "valeur-en": "General public",
+//                    "description-fr": "Logiciel conçu pour une utilisation par le grand public.",
+//                    "description-en": "Software designed for use by the general public."
+//                },
+//                "5": {
+//                    "valeur-fr": "Administrateurs",
+//                    "valeur-en": "Administrators",
+//                    "description-fr": "Logiciel destiné à être utilisé par les administrateurs pour la gestion et la maintenance.",
+//                    "description-en": "Software intended for use by administrators for management and maintenance."
+//                }
+//            }
+//        }
+//    }
+
+//}

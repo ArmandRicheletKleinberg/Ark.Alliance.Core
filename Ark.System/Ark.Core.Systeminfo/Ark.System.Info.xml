@@ -1,0 +1,1794 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ark.Infrastructure.Info</name>
+    </assembly>
+    <members>
+        <member name="T:Ark.Infrastructure.Info.AppSystemInfoDto">
+            <summary>
+            Aggregates runtime diagnostics for the current application and host machine.
+            + Centralizes framework, service, and resource metrics in a single payload.
+            - Collecting values may incur overhead on constrained devices.
+            Ref: <see href="https://learn.microsoft.com/dotnet/core/diagnostics/"/>
+            </summary>
+            <example>
+            {
+              "framework": "NET 9.0",
+              "operatingSystem": "Linux",
+              "memoryUsage": 64.2
+            }
+            </example>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.Framework">
+            <summary>
+            CLR or runtime identifier (e.g., <c>.NET 9.0</c>).
+            + Enables telemetry correlation across services.
+            - Does not include patch level information.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.ProgrammingLanguage">
+            <summary>
+            Programming language used to build the application.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.OperatingSystem">
+            <summary>
+            Human-readable operating system name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.OSType">
+            <summary>
+            OS family kind such as <see cref="T:Ark.Infrastructure.Info.OperatingSystemKind"/>.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.OSVersion">
+            <summary>
+            Version number of the host operating system.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.RunningServices">
+            <summary>
+            Services currently running on the host. Each entry is a <see cref="T:Ark.Infrastructure.Info.ServiceInfoDto"/>.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.MachineName">
+            <summary>
+            Host machine identifier.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.DomainName">
+            <summary>
+            Domain or workgroup name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.HostNetworkInfo">
+            <summary>
+            Detailed network information about the host.
+            + Includes IP configuration and port usage via <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/>.
+            - Retrieval may be slow on systems with many adapters.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.NetworkUsage">
+            <summary>
+            Gets or sets the network usage percentage.
+            + Derived from IPv4 statistics.
+            - IPv6 traffic is not included.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.DiskUsage">
+            <summary>
+            Disk utilization percentage.
+            + Aggregates space across all ready drives.
+            - Removable media are ignored.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.MemoryUsage">
+            <summary>
+            Memory utilization percentage.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.AssemblyCPUUsage">
+            <summary>
+            CPU usage for the current assembly or process.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.EventLogs">
+            <summary>
+            Event logs related to the binary.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AppSystemInfoDto.NetworkInfo">
+            <summary>
+            Network information for the host machine.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.AssemblyInfoDto">
+            <summary>
+            DTO that represents information about an assembly.
+            + Useful for auditing binaries associated with network ports.
+            - Does not verify digital signatures or file integrity.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.reflection.assemblyname"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.ProcessId">
+            <summary>
+            Process ID using the port.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.AssemblyPath">
+            <summary>
+            Assembly path.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.ProductName">
+            <summary>
+            Product name of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.Version">
+            <summary>
+            Version of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.Author">
+            <summary>
+            Author of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.Company">
+            <summary>
+            Company of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.AssemblyInfoDto.Signature">
+            <summary>
+            Signature of the assembly.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.DetailedServiceInfoDto">
+            <summary>
+            Describes a Windows service with runtime and executable information.
+            + Combines metrics, start/stop times and related <see cref="T:Ark.Infrastructure.Info.EventLogDto"/> entries.
+            - Some properties are only populated on Windows platforms.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller"/>.
+            </summary>
+            <remarks>
+            <example>
+            <code language="json">
+            {
+              "serviceName": "ssh",
+              "status": "Running"
+            }
+            </code>
+            </example>
+            </remarks>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.ServiceName">
+            <summary>
+            Gets or sets the service name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.DisplayName">
+            <summary>
+            Gets or sets the display name of the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Status">
+            <summary>
+            Gets or sets the current status of the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.StartType">
+            <summary>
+            Gets or sets the service start type.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Account">
+            <summary>
+            Gets or sets the account used to run the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.LastStartTime">
+            <summary>
+            Gets or sets the date and time when the service was last started.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.LastStopTime">
+            <summary>
+            Gets or sets the date and time when the service was last stopped.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.CpuUsage">
+            <summary>
+            Gets or sets the CPU usage percentage of the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.CpuProportion">
+            <summary>
+            Gets or sets the proportion of CPU usage relative to the system.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.MemoryUsage">
+            <summary>
+            Gets or sets the memory usage in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.MemoryProportion">
+            <summary>
+            Gets or sets the proportion of memory usage relative to the system.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.DiskUsage">
+            <summary>
+            Gets or sets the disk usage in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.DiskProportion">
+            <summary>
+            Gets or sets the proportion of disk usage relative to the system.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.NetworkUsage">
+            <summary>
+            Gets or sets the network usage in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.NetworkProportion">
+            <summary>
+            Gets or sets the proportion of network usage relative to the system.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Events">
+            <summary>
+            Gets or sets the list of recent event logs related to the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Version">
+            <summary>
+            Gets or sets the version of the service executable.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Signature">
+            <summary>
+            Gets or sets the signature subject if the executable is digitally signed.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.Publisher">
+            <summary>
+            Gets or sets the publisher name extracted from the executable information.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DetailedServiceInfoDto.ExecutableDate">
+            <summary>
+            Gets or sets the date of the executable file.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.DriveInfoDto">
+            <summary>
+            Snapshot of <see cref="T:System.IO.DriveInfo"/> values.
+            + Aggregates capacity and usage metrics for reporting.
+            - Does not refresh values automatically after creation.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.AvailableFreeSpace">
+            <summary>
+            Available free space on the drive, in bytes.
+            + Useful for capacity planning.
+            - May be outdated if the drive changes after retrieval.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.DriveFormat">
+            <summary>
+            Name of the file system such as <c>NTFS</c> or <c>FAT32</c>.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.DriveType">
+            <summary>
+            Drive type (e.g., <see cref="F:System.IO.DriveType.Fixed"/>).
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.IsReady">
+            <summary>
+            Indicates whether the drive is ready.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.Name">
+            <summary>
+            Drive name such as <c>C:\</c>.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.RootDirectory">
+            <summary>
+            Root directory of the drive.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.TotalFreeSpace">
+            <summary>
+            Total free space on the drive, in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.TotalSize">
+            <summary>
+            Total size of the drive, in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.Drive">
+            <summary>
+            Drive identifier or volume path.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.VolumeLabel">
+            <summary>
+            Volume label assigned to the drive.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.DriveInfoDto.UsagePercentage">
+            <summary>
+            Percentage of drive space in use.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.EventLogDto">
+            <summary>
+            Represents a single entry in the host event log.
+            + Captures log level, message and timestamp for auditing.
+            - Does not include source process or thread information.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventlogentry"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.EventLogDto.Level">
+            <summary>
+            Event log level.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.EventLogDto.Message">
+            <summary>
+            Event log message.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.EventLogDto.Time">
+            <summary>
+            Time the event was recorded.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.HostMachinePerfInfosDto">
+            <summary>
+            Snapshot of CPU, network, disk and assembly usage metrics for the host machine.
+            + Centralizes high-level performance counters for quick diagnostics.
+            - Values are instantaneous and may fluctuate rapidly.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.performancecounter"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.CPUUsage">
+            <summary>
+            CPU usage percentage.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.NetworkUsage">
+            <summary>
+            Network usage percentage.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.DiskUsage">
+            <summary>
+            Disk usage percentage.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.AssemblyCPUUsage">
+            <summary>
+            CPU usage of the current assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.DrivesUsage">
+            <summary>
+            Usage of individual drives.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostMachinePerfInfosDto.GlobalDriveSpaceUsage">
+            <summary>
+            Overall drive space usage.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.HostNetworkInfoDto">
+            <summary>
+            Aggregated network information for the host machine.
+            + Combines adapter, port, and usage metrics.
+            - Transient interfaces may be omitted.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostNetworkInfoDto.Adapters">
+            <summary>
+            Network adapters information.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostNetworkInfoDto.OccupiedPorts">
+            <summary>
+            Ports currently bound by services.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostNetworkInfoDto.OpenPorts">
+            <summary>
+            Open ports reported by the OS.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostNetworkInfoDto.UsagePercent">
+            <summary>
+            Current network usage percentage.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NetworkAdapterDto">
+            <summary>
+            Describes a network adapter.
+            + Captures addressing and throughput details.
+            - Provides no live monitoring information.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.Name">
+            <summary>
+            Adapter name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.Description">
+            <summary>
+            Adapter description.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.IpAddresses">
+            <summary>
+            IP addresses assigned to the adapter.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.IsDhcpEnabled">
+            <summary>
+            Indicates whether DHCP is enabled.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.MacAddress">
+            <summary>
+            Physical MAC address.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterDto.Speed">
+            <summary>
+            Link speed in bits per second.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NetworkAdapterInfoDto">
+            <summary>
+            DTO describing a network adapter and its current usage.
+            + Exposes both configuration and performance data.
+            - Requires administrative permissions on some platforms.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipinterfaceproperties"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.Name">
+            <summary>
+            Adapter name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.Description">
+            <summary>
+            Adapter description.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.Id">
+            <summary>
+            Interface identifier.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.IsDhcpEnabled">
+            <summary>
+            Indicates whether DHCP is enabled.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.Addresses">
+            <summary>
+            IP addresses assigned to the adapter.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.Speed">
+            <summary>
+            Interface speed in bits per second.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkAdapterInfoDto.UsagePercentage">
+            <summary>
+            Current network utilization percentage.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NetworkInfoDto">
+            <summary>
+            Represents host network configuration and occupied ports.
+            + Useful for troubleshooting connectivity issues.
+            - Does not resolve DNS names for addresses.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties"/>
+            </summary>
+            <example>
+            {
+              "ipAddress": "192.168.1.10",
+              "occupiedPorts": [{"portNumber": 80, "processId": 1234}]
+            }
+            </example>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkInfoDto.IPAddress">
+            <summary>
+            Host IPv4 or IPv6 address.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.NetworkInfoDto.OccupiedPorts">
+            <summary>
+            Ports currently in use on the host. Each entry is a <see cref="T:Ark.Infrastructure.Info.PortInfoDto"/>.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.PortInfoDto">
+            <summary>
+            DTO that represents information about an occupied port.
+            + Helps map services to listening sockets.
+            - Does not reflect dynamic port changes after capture.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Port">
+            <summary>
+            Port number.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.AssemblyPath">
+            <summary>
+            Assembly path using the port.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.ProductName">
+            <summary>
+            Product name of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Version">
+            <summary>
+            Assembly version.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Author">
+            <summary>
+            Author of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Company">
+            <summary>
+            Company of the assembly.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Signature">
+            <summary>
+            Digital signature subject if present.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.InternalName">
+            <summary>
+            Internal name from assembly metadata.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.ServiceName">
+            <summary>
+            Associated service name if available.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.ServiceDisplayName">
+            <summary>
+            Associated service display name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Protocol">
+            <summary>
+            Network protocol used by the port.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.PortInfoDto.Roles">
+            <summary>
+            Roles retrieved from the assembly manifest if any.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.ServiceInfoDto">
+            <summary>
+            Lightweight summary of a Windows service.
+            + Includes status and account information for quick diagnostics.
+            - Omits resource metrics to minimize overhead.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.ServiceName">
+            <summary>
+            Service name.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.Account">
+            <summary>
+            Account under which the service runs.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.DisplayName">
+            <summary>
+            Display name of the service.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.Status">
+            <summary>
+            Service status.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.StartType">
+            <summary>
+            Service start type.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.StartTime">
+            <summary>
+            Date and time when the service started.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.Uptime">
+            <summary>
+            Duration the service has been running.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.Path">
+            <summary>
+            Path of the service executable.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.IsCanStop">
+            <summary>
+            Indicates whether the service can be stopped.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.ServiceInfoDto.IsCanStarted">
+            <summary>
+            Indicates whether the service can be started.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.OperatingSystemKind">
+            <summary>
+            Defines host operating system categories.
+            + Enables platform-specific providers to adapt behavior.
+            - Collapses detailed distributions into generic values.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.operatingsystem"/>
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.Windows">
+            <summary>
+            Microsoft Windows family.
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.Linux">
+            <summary>
+            Linux distributions including Ubuntu.
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.MacOs">
+            <summary>
+            Apple macOS.
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.Android">
+            <summary>
+            Google Android.
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.Ios">
+            <summary>
+            Apple iOS.
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.OperatingSystemKind.Unknown">
+            <summary>
+            Unknown or unsupported OS.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider">
+            <summary>
+            Default implementation of <see cref="T:Ark.Infrastructure.Info.IEnvironmentInfoProvider"/> that delegates
+            to <see cref="T:Ark.Infrastructure.Info.EnvironmentInfoProvider"/>.
+            + Simplifies consumption by exposing a single entry point.
+            - Provides no additional caching or optimizations.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.environment"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)">
+            <summary>
+            Gets detailed information about the execution environment.
+            + Synchronous and straightforward.
+            - Performs immediate metric collection which may be slow on some hosts.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/>.
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously gets detailed information about the execution environment.
+            + Non-blocking for responsive applications.
+            - Spawns a task and may allocate additional threads.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>A task producing the same payload as <see cref="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetLazyEnvironmentInfo(System.Int32)">
+            <summary>
+            Gets partial information about the execution environment.
+            + Faster than <see cref="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)"/> when only minimal data is required.
+            - Omits event logs and other costly metrics.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> with an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> that has a reduced set of fields.
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetLazyEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously gets partial information about the execution environment.
+            + Offloads work to a background task.
+            - Still gathers a limited set of metrics.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>A task producing the same reduced payload as <see cref="M:Ark.Infrastructure.Info.DefaultEnvironmentInfoProvider.GetLazyEnvironmentInfo(System.Int32)"/>.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.EnvironmentInfoProvider">
+            <summary>
+            Provides methods to retrieve detailed information about the execution environment.
+            + Aggregates CPU, memory, network, and service data in one object.
+            - Each call enumerates system resources and may be costly on large hosts.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.runtime.interopservices.runtimeinformation"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)">
+            <summary>
+            Builds a full <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> snapshot of the current environment.
+            + Combines multiple providers into a single payload and uses <see cref="T:Ark.Infrastructure.Info.OSHelper"/> for platform checks.
+            - Runs synchronously and may block while querying services and event logs.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventlog"/>
+            </summary>
+            <param name="since">Minutes of event logs to include.</param>
+            <returns>A populated <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/>.</returns>
+            <example>
+            <code language="json">
+            {
+              "machineName": "HOST",
+              "operatingSystem": "Linux"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously collects a comprehensive snapshot of the host environment.
+            + Offloads work to the thread pool via <see cref="M:System.Threading.Tasks.Task.Run``1(System.Func{``0})"/>.
+            - Uses a background thread rather than true asynchronous APIs.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.run"/>
+            </summary>
+            <param name="since">Minutes of event logs to include.</param>
+            <returns>
+            Task producing an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/>.
+            Example JSON:
+            <code language="json">
+            {
+              "machineName": "HOST",
+              "operatingSystem": "Linux"
+            }
+            </code>
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetLazyEnvironmentInfo(System.Int32)">
+            <summary>
+            Collects a lightweight snapshot of the host environment skipping heavy operations.
+            + Avoids expensive queries for faster execution.
+            - Provides less detailed diagnostics than <see cref="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)"/>.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.environment"/>
+            </summary>
+            <param name="since">Minutes of event logs to include.</param>
+            <returns>An <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> containing basic environment data.</returns>
+            <example>
+            <code>
+            var environmentInfo = EnvironmentInfoProvider.GetLazyEnvironmentInfo();
+            </code>
+            </example>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetLazyEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously retrieves a lightweight environment snapshot.
+            + Uses <see cref="M:System.Threading.Tasks.Task.Run``1(System.Func{``0})"/> to offload work.
+            - Returns limited metrics compared to <see cref="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetEnvironmentInfoAsync(System.Int32)"/>.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"/>
+            </summary>
+            <param name="since">Minutes of event logs to include.</param>
+            <returns>A task producing an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> with basic environment data.</returns>
+            <example>
+            <code>
+            var info = await EnvironmentInfoProvider.GetLazyEnvironmentInfoAsync();
+            </code>
+            </example>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetCPUUsageAsync">
+            <summary>
+            Gets the total CPU usage percentage asynchronously.
+            + Offloads sampling to a background thread using <see cref="M:System.Threading.Tasks.Task.Run``1(System.Func{``0})"/>.
+            - Single snapshot; does not average over time.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.performancecounter"/>
+            </summary>
+            <returns>A task returning the CPU usage percentage (e.g., <c>75.5</c>).</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetNetworkUsageAsync">
+            <summary>
+            Gets the total network usage asynchronously.
+            + Aggregates sent and received bytes across all adapters.
+            - Uses <see cref="T:System.Net.NetworkInformation.NetworkInterface"/> which may not include virtual interfaces on some systems.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+            <returns>A task returning the total network usage in bytes.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetDiskUsageAsync">
+            <summary>
+            Gets the disk usage percentage asynchronously.
+            + Computes totals across all ready drives.
+            - Uses <see cref="T:System.IO.DriveInfo"/> which may block on slow media.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+            <returns>A task returning the disk usage percentage.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetRunningServices">
+            <summary>
+            Gets a list of services that are currently running.
+            </summary>
+            <returns>A list of <see cref="T:Ark.Infrastructure.Info.ServiceInfoDto"/> objects representing the running services.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetIPAddresses">
+            <summary>
+            Lists host IPv4 and IPv6 addresses.
+            + Filters address families using Ark extensions.
+            - Loopback and unsupported families are skipped.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.dns.gethostentry"/>
+            </summary>
+            <returns>A list of IP addresses as strings.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetCPUUsage">
+            <summary>
+            Gets the total CPU usage percentage.
+            + Uses <see cref="T:System.Diagnostics.PerformanceCounter"/> for cross-platform CPU metrics.
+            - Requires an initial delay to obtain a stable reading.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.performancecounter"/>
+            </summary>
+            <returns>The total CPU usage percentage.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetNetworkUsage">
+            <summary>
+            Gets the total network usage in bytes.
+            + Sums sent and received bytes from <see cref="T:System.Net.NetworkInformation.NetworkInterface"/> statistics.
+            - IPv6 statistics are not included.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+            <returns>The total network usage in bytes.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetDiskUsage">
+            <summary>
+            Gets the disk usage percentage.
+            + Aggregates capacity across all ready drives.
+            - Excludes drives that are not currently mounted or ready.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+            <returns>The disk usage percentage.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetMemoryUsage">
+            <summary>
+            Gets the memory usage percentage.
+            </summary>
+            <returns>The memory usage percentage.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EnvironmentInfoProvider.GetCurrentProcessCPUUsage">
+            <summary>
+            Gets the CPU usage percentage of the current process.
+            </summary>
+            <returns>The CPU usage percentage of the current process.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IEnvironmentInfoProvider">
+            <summary>
+            Provides rich environment diagnostics including running services and resource usage.
+            + Enables cross-platform monitoring via pluggable providers.
+            - May require elevated permissions on restricted systems.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.environment"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IEnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)">
+            <summary>
+            Gets detailed environment information.
+            + Synchronous call suitable for scripts.
+            - Blocks the calling thread while gathering metrics.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> payload.
+            Example:
+            <code language="json">
+            {
+              "services": ["svc1"],
+              "cpuUsage": 0.15
+            }
+            </code>
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IEnvironmentInfoProvider.GetEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously gets detailed environment information.
+            + Does not block the calling thread.
+            - Incurred overhead from context switches.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>A task returning a <see cref="T:Ark.Result`1"/> with the same payload as <see cref="M:Ark.Infrastructure.Info.IEnvironmentInfoProvider.GetEnvironmentInfo(System.Int32)"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IEnvironmentInfoProvider.GetLazyEnvironmentInfo(System.Int32)">
+            <summary>
+            Gets limited environment information.
+            + Lightweight when full diagnostics are unnecessary.
+            - Omits detailed metrics like event logs.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing an <see cref="T:Ark.Infrastructure.Info.AppSystemInfoDto"/> with reduced fields.
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IEnvironmentInfoProvider.GetLazyEnvironmentInfoAsync(System.Int32)">
+            <summary>
+            Asynchronously gets limited environment information.
+            + Suitable for UI threads or web APIs.
+            - Still limited in returned metrics.
+            </summary>
+            <param name="since">The number of minutes of event logs to include.</param>
+            <returns>A task returning a <see cref="T:Ark.Result`1"/> with reduced environment details.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.AndroidEventLogInfoProvider">
+            <summary>
+            Event log provider implementation for Android platforms.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.EventLogInfoProvider">
+            <summary>
+            Provides an entry point to retrieve events from the underlying operating system.
+            + Centralizes platform-specific providers behind a single API.
+            - Requires access to OS event logs which may demand elevated privileges.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventlog"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EventLogInfoProvider.GetEventLogs(System.Int32,System.String,System.String[])">
+            <summary>
+            Retrieves event logs emitted by the current process.
+            + Supports platform-specific log stores.
+            - Large log files may incur allocation overhead.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventlogentry"/>
+            </summary>
+            <param name="since">Timespan in minutes from which to retrieve event logs.</param>
+            <param name="logSourceName">Event log source, e.g. <c>"Application"</c>.</param>
+            <param name="entryTypes">Optional array of entry types to filter.</param>
+            <returns>
+            List of <see cref="T:Ark.Infrastructure.Info.EventLogDto"/> items.
+            Example JSON:
+            <code language="json">
+            [
+              { "source": "Application", "message": "Started" }
+            ]
+            </code>
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.EventLogInfoProvider.GetApplicationEvents(System.String,System.Int32,System.String[])">
+            <summary>
+            Retrieves event logs for a specific application filtered by entry type.
+            + Allows targeted diagnostics for a given application.
+            - Application-specific logs may not exist on all platforms.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventlog"/>
+            </summary>
+            <param name="applicationName">The name of the application.</param>
+            <param name="since">Timespan in minutes from which to retrieve event logs.</param>
+            <param name="entryTypes">Optional array of entry types to filter.</param>
+            <returns>
+            List of <see cref="T:Ark.Infrastructure.Info.EventLogDto"/> objects representing the event logs.
+            Example JSON:
+            <code language="json">
+            [
+              { "source": "MyApp", "level": "Error" }
+            ]
+            </code>
+            </returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IEventLogInfoProvider">
+            <summary>
+            Abstraction for retrieving operating system event log entries.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IosEventLogInfoProvider">
+            <summary>
+            Event log provider implementation for iOS/macOS platforms.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.LinuxEventLogInfoProvider">
+            <summary>
+            Event log provider implementation for Linux platforms.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.WindowsEventLogInfoProvider">
+            <summary>
+            Retrieves Windows event log entries through <see cref="T:System.Diagnostics.Eventing.Reader.EventLogReader"/>.
+            + Filters by log level and time using XPath queries.
+            - Works only on Windows hosts; other platforms require alternative providers.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.diagnostics.eventing.reader.eventlogreader"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsEventLogInfoProvider.GetEventLogs(System.Int32,System.String,System.String[])">
+            <summary>
+            Retrieves event logs emitted by the specified source.
+            + Convenience wrapper around <see cref="M:Ark.Infrastructure.Info.WindowsEventLogInfoProvider.GetApplicationEvents(System.String,System.Int32,System.String[])"/>.
+            - Performs synchronous I/O and may be slow for large log files.
+            </summary>
+            <param name="since">Minutes of history to include.</param>
+            <param name="logSourceName">Event log source name, e.g. <c>"Application"</c>.</param>
+            <param name="entryTypes">Optional entry type names such as <c>"Error"</c>.</param>
+            <returns>List of <see cref="T:Ark.Infrastructure.Info.EventLogDto"/> entries.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsEventLogInfoProvider.GetApplicationEvents(System.String,System.Int32,System.String[])">
+            <summary>
+            Retrieves application-specific event log records.
+            + Converts Windows log levels into readable strings.
+            - Access may require administrative privileges.
+            Example JSON:
+            <code language="json">
+            [
+              { "level": "Error", "message": "Failure", "time": "2025-01-01T00:00:00Z" }
+            ]
+            </code>
+            </summary>
+            <param name="applicationName">The event log provider name.</param>
+            <param name="since">Minutes of history to include.</param>
+            <param name="entryTypes">Optional entry type names such as <c>"Error"</c>.</param>
+            <returns>Collection of <see cref="T:Ark.Infrastructure.Info.EventLogDto"/> records.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsEventLogInfoProvider.ConvertEntryType(System.String)">
+            <summary>
+            Maps textual entry type names to Windows log level integers.
+            </summary>
+            <param name="entryType">Entry type name, e.g. <c>"Error"</c>.</param>
+            <returns>Corresponding level value or <c>-1</c> when unknown.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsEventLogInfoProvider.ConvertLevel(System.Int32)">
+            <summary>
+            Converts numeric Windows event levels into human-readable strings.
+            </summary>
+            <param name="level">Numeric level.</param>
+            <returns>Readable level string.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.DriveHelper">
+            <summary>
+            Utility for retrieving drive metrics using <see cref="T:System.IO.DriveInfo"/>.
+            + Consolidates per‑drive statistics and computes global usage.
+            - Skips drives that are not ready, such as removable media.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DriveHelper.GetDriveUsageDetails">
+            <summary>
+            Gets detailed information about each ready drive and calculates global disk usage.
+            + Iterates drives once to collect totals and details.
+            - Uses <see cref="T:System.IO.DriveInfo"/> which may be slow on network shares.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+            <returns>
+            Tuple with <c>GlobalUsagePercentage</c> and collection of <see cref="T:Ark.Infrastructure.Info.DriveInfoDto"/>.
+            Example JSON:
+            <code language="json">
+            {
+              "globalUsagePercentage": 72.5,
+              "driveDetails": [
+                { "name": "C:\\", "usagePercentage": 70.1 }
+              ]
+            }
+            </code>
+            </returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.HostInfoProvider">
+            <summary>
+            Aggregates host‑level diagnostics.
+            + Exposes drive, network and OS details through high‑level helpers.
+            - Recomputes data on each call without caching.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.environment"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.HostInfoProvider.CurrentOs">
+            <summary>
+            Current operating system kind.
+            + Delegates detection to <see cref="M:Ark.Infrastructure.Info.OSHelper.GetCurrentPlatform"/>.
+            - Unknown platforms return <see cref="F:Ark.Infrastructure.Info.OperatingSystemKind.Unknown"/>.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.HostInfoProvider.GetDriveInfo">
+            <summary>
+            Aggregates disk usage and per‑drive metrics.
+            + Uses <see cref="M:Ark.Infrastructure.Info.DriveHelper.GetDriveUsageDetails"/> for ready drives.
+            - Ignores unmounted or inaccessible drives.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.HostInfoProvider.GetNetworkInfo">
+            <summary>
+            Retrieves IP configuration and occupied ports.
+            + Leverages <see cref="T:Ark.Infrastructure.Info.NetworkHelper"/> to consolidate network details.
+            - Returns only the first detected address.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties"/>
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NetworkHelper">
+            <summary>
+            Provides methods to retrieve network information such as IP address, occupied ports, and domain name of the machine.
+            </summary>
+            <remarks>
+            The <see cref="T:Ark.Infrastructure.Info.NetworkInfoDto"/> class includes methods to:
+            <list type="bullet">
+            <item>
+            <description>Get the local IP address of the machine (<see cref="M:Ark.Infrastructure.Info.NetworkHelper.GetLocalIPAddress"/>).</description>
+            </item>
+            <item>
+            <description>Get the list of currently occupied ports along with their assemblies (<see cref="M:Ark.Infrastructure.Info.NetworkHelper.GetOccupiedPorts"/>).</description>
+            </item>
+            <item>
+            <description>Get the fully qualified domain name (FQDN) of the machine (<see cref="M:Ark.Infrastructure.Info.NetworkHelper.GetFullyQualifiedDomainName"/>).</description>
+            </item>
+            <item>
+            <description>Get detailed network information including IP address and occupied ports (<see cref="M:Ark.Infrastructure.Info.NetworkHelper.GetNetworkInfo"/>).</description>
+            </item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetLocalIPAddress">
+            <summary>
+            Retrieves the local IP address.
+            + Scans DNS entries and filters IPv4 and IPv6 addresses.
+            - Returns only the first matching address.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.dns.gethostentry"/>
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing the IP address of the current machine as a string or an error message.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetOccupiedPorts">
+            <summary>
+            Enumerates ports currently in use and their owning assemblies.
+            + Merges TCP and UDP listeners for a unified view.
+            - Requires `netstat` and may need elevated privileges.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties.getactivetcplisteners"/>
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing a list of <see cref="T:Ark.Infrastructure.Info.PortInfoDto"/> representing the occupied ports and their assemblies or an error message.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetAssemblyInfoUsingPort(System.Int32)">
+            <summary>
+            Gets the process information using a specific port and retrieves its assembly information.
+            </summary>
+            <param name="port">The port number.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> containing an <see cref="T:Ark.Infrastructure.Info.AssemblyInfoDto"/> with the assembly details or an error message.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetAssemblyAttribute``1(System.Diagnostics.ProcessModule)">
+            <summary>
+            Gets a specific attribute from an assembly.
+            </summary>
+            <typeparam name="T">The type of attribute to retrieve.</typeparam>
+            <param name="module">The module to get the attribute from.</param>
+            <returns>The attribute of type <typeparamref name="T"/>, if found; otherwise, null.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetAssemblySignature(System.String)">
+            <summary>
+            Gets the signature of an assembly file.
+            </summary>
+            <param name="filePath">The path to the assembly file.</param>
+            <returns>The signature of the assembly file, if found; otherwise, null.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetNetworkInfo">
+            <summary>
+            Bundles local IP and active ports into a single structure.
+            + Reuses existing helpers for consolidated output.
+            - Fails fast if either query fails.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties"/>
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing a <see cref="T:Ark.Infrastructure.Info.NetworkInfoDto"/> with the IP address and a list of occupied ports or an error message.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.GetFullyQualifiedDomainName">
+            <summary>
+            Resolves the machine's fully qualified domain name (FQDN).
+            + Uses <see cref="T:System.Net.NetworkInformation.IPGlobalProperties"/> to append the domain when available.
+            - Falls back to the host name if no domain is configured.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.ipglobalproperties.domainname"/>
+            </summary>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing the fully qualified domain name of the current machine or an error message.
+            If the machine is not part of a domain, the method returns only the machine name.
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.ExtractProcessIdFromNetstatOutput(System.String)">
+            <summary>
+            Extracts the process ID from the netstat output.
+            </summary>
+            <param name="netstatOutput">The netstat command output.</param>
+            <returns>The Process ID if found, or -1 if not found.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkHelper.ExecuteNetstatCommand(System.Int32)">
+            <summary>
+            Executes the netstat command to retrieve information about the process using the specified port.
+            </summary>
+            <param name="port">The port number.</param>
+            <returns>The output of the netstat command.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NativeMemory">
+            <summary>
+            Provides cross-platform helpers to query total physical memory.
+            + Uses native APIs or <c>/proc/meminfo</c> to deliver accurate totals.
+            - Returns <c>0</c> when platform details cannot be determined.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.runtime.interopservices.runtimeinformation"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NativeMemory.GetTotalPhysicalMemory">
+            <summary>
+            Retrieves total physical memory in bytes.
+            + Enables environment snapshots to compute usage percentages.
+            - On unsupported platforms the value may be approximate or zero.
+            </summary>
+            <returns>Total physical memory in bytes.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.OSHelper">
+            <summary>
+            Helper methods related to operating system detection.
+            + Wraps <see cref="T:System.OperatingSystem"/> helpers for concise platform checks.
+            - Mirrors the <see cref="T:Ark.Infrastructure.Info.OperatingSystemKind"/> enumeration; new platforms require updates.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.operatingsystem"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.OSHelper.GetCurrentPlatform">
+            <summary>
+            Determines the current operating system.
+            + Uses built-in platform checks avoiding manual `RuntimeInformation` calls.
+            - Adds branching for each supported platform.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.operatingsystem.iswindows"/>
+            </summary>
+            <returns>The detected <see cref="T:Ark.Infrastructure.Info.OperatingSystemKind"/>.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.PlatformProvider">
+            <summary>
+            Provides helper methods to select platform specific implementations.
+            + Centralizes runtime OS checks in one place.
+            - Requires supplying factories for all supported platforms.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.runtime.interopservices.runtimeinformation"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.PlatformProvider.Create``1(System.Func{``0},System.Func{``0},System.Func{``0},System.Func{``0},System.Func{``0})">
+            <summary>
+            Selects a platform-specific implementation using runtime OS checks.
+            + Executes the function corresponding to the detected platform.
+            - Falls back to <paramref name="default"/> when the OS is unsupported.
+            </summary>
+            <typeparam name="T">Return type of the factory methods.</typeparam>
+            <param name="windows">Factory for Windows.</param>
+            <param name="linux">Factory for Linux.</param>
+            <param name="android">Factory for Android.</param>
+            <param name="ios">Factory for iOS/macOS.</param>
+            <param name="default">Fallback factory when platform is unknown.</param>
+            <returns>The value produced by the matching factory.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.ServiceInfoMapper">
+            <summary>
+            Maps raw service information to <see cref="T:Ark.Infrastructure.Info.DetailedServiceInfoDto"/> objects.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfoMapper.Map(System.ServiceProcess.ServiceController,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Double,System.Double,System.Double,System.Double,System.Collections.Generic.List{Ark.Infrastructure.Info.EventLogDto},System.String,System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Builds a <see cref="T:Ark.Infrastructure.Info.DetailedServiceInfoDto"/> from service metrics.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.AndroidNetworkInfoProvider">
+            <summary>
+            Android implementation of <see cref="T:Ark.Infrastructure.Info.INetworkInfoProvider"/>.
+            + Inherits Linux provider to cover Android's Linux kernel.
+            - Omits mobile radio metrics and permissions checks.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.INetworkInfoProvider">
+            <summary>
+            Abstraction for retrieving network information on the current platform.
+            + Allows platform-specific implementations (Windows, Linux, etc.).
+            - Exposes only a minimal set of diagnostics.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.INetworkInfoProvider.GetNetworkInfo">
+            <summary>
+            Retrieves detailed network information for the host.
+            + Synchronous for use in simple scripts.
+            - May block while probing system interfaces.
+            </summary>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing values like IP addresses and occupied ports.
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.INetworkInfoProvider.GetNetworkInfoAsync">
+            <summary>
+            Asynchronously retrieves detailed network information for the host.
+            + Suitable for UI threads or high concurrency scenarios.
+            - Still subject to underlying platform API latency.
+            </summary>
+            <returns>
+            A task yielding the same <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/> payload as <see cref="M:Ark.Infrastructure.Info.INetworkInfoProvider.GetNetworkInfo"/>.
+            </returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IosNetworkInfoProvider">
+            <summary>
+            iOS implementation of <see cref="T:Ark.Infrastructure.Info.INetworkInfoProvider"/>.
+            + Reuses <see cref="T:Ark.Infrastructure.Info.LinuxNetworkInfoProvider"/> for Darwin systems.
+            - Lacks iOS-specific adapter metrics.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.LinuxNetworkInfoProvider">
+            <summary>
+            Provides network diagnostics for Linux-based systems.
+            + Enumerates occupied ports and adapter statistics.
+            - Uses 500 ms sampling which blocks the calling thread.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.LinuxNetworkInfoProvider.GetNetworkInfo">
+            <summary>
+            Gets network diagnostics for the host.
+            + Includes port usage and adapter throughput.
+            - Requires synchronous sampling for bandwidth calculation.
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.LinuxNetworkInfoProvider.GetNetworkInfoAsync">
+            <summary>
+            Asynchronously gets network diagnostics.
+            + Offloads synchronous work to the thread pool via <see cref="M:System.Threading.Tasks.Task.Run(System.Action)"/>.
+            - Still blocks a thread during sampling.
+            </summary>
+            <returns>Task producing a <see cref="T:Ark.Result`1"/> with <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/>.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.NetworkInfoProvider">
+            <summary>
+            Entry point to retrieve network information across platforms.
+            + Dispatches to platform-specific providers via <see cref="T:Ark.Infrastructure.Info.PlatformProvider"/>.
+            - Returns minimal information on unsupported operating systems.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation"/>
+            </summary>
+        </member>
+        <member name="F:Ark.Infrastructure.Info.NetworkInfoProvider._provider">
+            <summary>
+            Platform-specific implementation selected at runtime.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkInfoProvider.GetNetworkInfo">
+            <summary>
+            Retrieves aggregated network information for the host.
+            + Useful for diagnostics and monitoring dashboards.
+            - May incur network interface enumeration overhead.
+            </summary>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> whose <see cref="P:Ark.Result`1.Data"/> resembles:
+            <code>
+            {
+              "ipAddress": "192.168.1.10",
+              "occupiedPorts": []
+            }
+            </code>
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.NetworkInfoProvider.GetNetworkInfoAsync">
+            <summary>
+            Asynchronously retrieves aggregated network information for the host.
+            + Avoids blocking the caller during network enumeration.
+            - Still executed sequentially on the provider side.
+            </summary>
+            <returns>
+            A task producing the same payload as <see cref="M:Ark.Infrastructure.Info.NetworkInfoProvider.GetNetworkInfo"/> in JSON form.
+            </returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.WindowsNetworkInfoProvider">
+            <summary>
+            Provides network adapter and port diagnostics for Windows hosts.
+            + Aggregates occupied and open ports with usage percentages.
+            - Samples throughput by sleeping, which blocks the calling thread.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.networkinformation.networkinterface"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsNetworkInfoProvider.GetNetworkInfo">
+            <summary>
+            Gets network diagnostics for the host.
+            + Includes adapter statistics and port lists.
+            - Requires synchronous sampling for 500 ms per adapter.
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsNetworkInfoProvider.GetNetworkInfoAsync">
+            <summary>
+            Asynchronously gets network diagnostics.
+            + Offloads work to the thread pool via <see cref="M:System.Threading.Tasks.Task.Run(System.Action)"/>.
+            - Still performs blocking operations internally.
+            </summary>
+            <returns>Task producing a <see cref="T:Ark.Result`1"/> with <see cref="T:Ark.Infrastructure.Info.HostNetworkInfoDto"/>.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.SystemInfoRepository">
+            <summary>
+            Repository providing access to system service information.
+            + Wraps <see cref="T:Ark.Infrastructure.Info.ServiceInfoProvider"/> for simple consumption.
+            - Instantiates providers on each call without caching.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.SystemInfoRepository.GetServicesAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets detailed information about installed services.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Optional publisher contained in the executable.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> containing the matching services.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.SystemInfoRepository.GetServices(System.String,System.String,System.Int32)">
+            <summary>
+            Gets detailed information about installed services synchronously.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Optional publisher contained in the executable.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> containing the matching services.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IServiceInfoProvider">
+            <summary>
+            Provides an abstraction to query service information.
+            + Enables mocking and testability for service queries.
+            - Implementations may rely on platform-specific APIs.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller"/>.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IServiceInfoProvider.GetServices(System.String,System.String,System.Int32)">
+            <summary>
+            Gets detailed information about installed services.
+            + Returns CPU, memory and log data when supported by the platform.
+            - May require administrative rights on Windows.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Optional publisher contained in the executable.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> containing the matching services.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IServiceInfoProvider.GetServicesAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Asynchronously gets detailed information about installed services.
+            + Uses <see cref="T:System.Threading.Tasks.Task"/> to avoid blocking callers.
+            - Still subject to the same permissions as <see cref="M:Ark.Infrastructure.Info.IServiceInfoProvider.GetServices(System.String,System.String,System.Int32)"/>.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Optional publisher contained in the executable.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>A task returning a <see cref="T:Ark.Result`1"/> containing the matching services.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.ServiceInfo">
+            <summary>
+            Provides utilities to query system services on the current operating system.
+            + Aggregates runtime data and event logs across platforms.
+            - Requires elevated permissions to access some service metadata.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller"/>.
+            On Windows it relies on <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller">ServiceController</see> and related APIs.
+            On Linux it executes <c>systemctl</c> commands.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.Get(System.String,System.String,System.Int32)">
+            <summary>
+            Gets detailed information about installed services on the current system.
+            + Includes CPU, memory and disk usage when available.
+            - Windows-specific details may not be accessible without administrator rights.
+            Ref: <see href="https://learn.microsoft.com/windows/win32/services/service-controller-manager"/>.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Publisher contained in the executable for Windows services.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing a list of <see cref="T:Ark.Infrastructure.Info.DetailedServiceInfoDto"/>.
+            The result serializes to:
+            <example>
+            <code language="json">
+            [
+              {
+                "serviceName": "ssh",
+                "status": "Running"
+              }
+            ]
+            </code>
+            </example>
+            </returns>
+            <example>
+            <code>
+            Result&lt;List&lt;DetailedServiceInfoDto&gt;&gt; result = ServiceInfo.Get("ssh");
+            </code>
+            </example>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Asynchronously gets detailed information about installed services on the current system.
+            + Offloads work to a background thread to avoid blocking the caller.
+            - Still subject to the same platform limitations as <see cref="M:Ark.Infrastructure.Info.ServiceInfo.Get(System.String,System.String,System.Int32)"/>.
+            Ref: <see href="https://learn.microsoft.com/dotnet/standard/parallel-programming/task-parallel-library-tpl"/>.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Publisher contained in the executable for Windows services.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>
+            A task returning a <see cref="T:Ark.Result`1"/> containing the matching services.
+            The payload is identical to <see cref="M:Ark.Infrastructure.Info.ServiceInfo.Get(System.String,System.String,System.Int32)"/>:
+            <example>
+            <code language="json">
+            [
+              {
+                "serviceName": "ssh",
+                "status": "Running"
+              }
+            ]
+            </code>
+            </example>
+            </returns>
+            <example>
+            <code>
+            Result&lt;List&lt;DetailedServiceInfoDto&gt;&gt; result = await ServiceInfo.GetAsync("ssh");
+            </code>
+            </example>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetWindowsServices(System.String,System.String,System.Int32)">
+            <summary>
+            Retrieves services using the Windows <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller">ServiceController</see> API.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.BuildWindowsInfo(System.ServiceProcess.ServiceController,System.Int32,System.String)">
+            <summary>
+            Builds a <see cref="T:Ark.Infrastructure.Info.DetailedServiceInfoDto"/> for a specific Windows service.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetServiceAccount(System.String)">
+            <summary>
+            Retrieves the account used to run a Windows service.
+            </summary>
+            <param name="serviceName">Name of the service.</param>
+            <returns>The start account or an empty string.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetServiceExecutablePath(System.String)">
+            <summary>
+            Gets the path to the service executable.
+            </summary>
+            <param name="serviceName">Name of the service.</param>
+            <returns>The executable path or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetProcessId(System.String)">
+            <summary>
+            Resolves the process identifier for a service.
+            </summary>
+            <param name="serviceName">Name of the service.</param>
+            <returns>The process id or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetTotalMemory">
+            <summary>
+            Returns the amount of physical memory in bytes.
+            </summary>
+            <returns>The total memory or zero if unavailable.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetLastServiceEvent(System.String,System.Boolean)">
+            <summary>
+            Reads the system event log to locate the last start or stop event.
+            </summary>
+            <param name="serviceName">Name of the service.</param>
+            <param name="start">True to search for start events, otherwise stop events.</param>
+            <returns>The event time or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetServiceEvents(System.String,System.Int32)">
+            <summary>
+            Retrieves application log events related to the service within the given time window.
+            </summary>
+            <param name="serviceName">Name of the service.</param>
+            <param name="minutes">Time window in minutes.</param>
+            <returns>The list of related events.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfo.GetLinuxServices(System.String)">
+            <summary>
+            Retrieves services on Linux systems using the <c>systemctl</c> command.
+            </summary>
+            <param name="namePattern">Optional filter applied to service names.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> with the discovered services.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.ServiceInfoProvider">
+            <summary>
+            Default implementation of <see cref="T:Ark.Infrastructure.Info.IServiceInfoProvider"/> using <see cref="T:Ark.Infrastructure.Info.ServiceInfo"/>.
+            + Offers synchronous and asynchronous querying helpers.
+            - Performs no caching; each call queries the system again.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.serviceprocess.servicecontroller"/>.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfoProvider.GetServices(System.String,System.String,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Ark.Infrastructure.Info.ServiceInfoProvider.GetServicesAsync(System.String,System.String,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.Infrastructure.Info.AndroidStorageInfoProvider">
+            <summary>
+            Retrieves storage information on Android platforms.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.AndroidStorageInfoProvider.GetStorageInfos">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.Infrastructure.Info.DefaultStorageInfoProvider">
+            <summary>
+            Default storage provider when the operating system is not recognized.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.DefaultStorageInfoProvider.GetStorageInfos">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IosStorageInfoProvider">
+            <summary>
+            Retrieves storage information on iOS/macOS platforms.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IosStorageInfoProvider.GetStorageInfos">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.Infrastructure.Info.IStorageInfoProvider">
+            <summary>
+            Abstraction for retrieving storage information on the current platform.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IStorageInfoProvider.GetStorageInfos">
+            <summary>
+            Retrieves detailed storage information for all available drives.
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing a list of <see cref="T:Ark.Infrastructure.Info.StorageInfoDto"/> objects.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.IStorageInfoProvider.GetStorageInfosAsync">
+            <summary>
+            Asynchronously retrieves detailed storage information for all available drives.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.LinuxStorageInfoProvider">
+            <summary>
+            Retrieves storage information on Linux platforms.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.LinuxStorageInfoProvider.GetStorageInfos">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.Infrastructure.Info.StorageInfoDto">
+            <summary>
+            Represents information about a storage device or logical drive.
+            + Aggregates key metrics like capacity and permissions.
+            - Captures only a snapshot at the time of collection.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.Name">
+            <summary>
+            Gets or sets the display name of the drive.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.PhysicalPath">
+            <summary>
+            Gets or sets the physical path of the drive if known.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.LogicalPath">
+            <summary>
+            Gets or sets the logical path such as the mount point.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.Alias">
+            <summary>
+            Gets or sets an optional alias for the drive.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.Permissions">
+            <summary>
+            Gets or sets the access permissions for the drive root.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.AvailableFreeSpace">
+            <summary>
+            Gets or sets the remaining free space in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.TotalSize">
+            <summary>
+            Gets or sets the total size in bytes.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.DriveType">
+            <summary>
+            Gets or sets the hardware drive type if available.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.ReadSpeed">
+            <summary>
+            Gets or sets the measured read performance in MB/s.
+            </summary>
+        </member>
+        <member name="P:Ark.Infrastructure.Info.StorageInfoDto.WriteSpeed">
+            <summary>
+            Gets or sets the measured write performance in MB/s.
+            </summary>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.StorageInfoProvider">
+            <summary>
+            Entry point to retrieve storage information across platforms.
+            + Dispatches to platform-specific providers for accurate metrics.
+            - Each call probes the file system which may be slow on large disks.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.StorageInfoProvider.GetStorageInfos">
+            <summary>
+            Gets detailed information about available storage devices.
+            + Synchronous for simple scripts and tooling.
+            - May block while enumerating slow devices.
+            </summary>
+            <returns>
+            A <see cref="T:Ark.Result`1"/> containing a list of <see cref="T:Ark.Infrastructure.Info.StorageInfoDto"/> objects.
+            Example:
+            <code language="json">
+            [
+              { "name": "C:", "totalSize": 500000000000 }
+            ]
+            </code>
+            </returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.StorageInfoProvider.GetStorageInfosAsync">
+            <summary>
+            Asynchronously gets detailed information about available storage devices.
+            + Ideal for UI applications.
+            - Still performs disk I/O which may be expensive.
+            </summary>
+            <returns>A task yielding the same payload as <see cref="M:Ark.Infrastructure.Info.StorageInfoProvider.GetStorageInfos"/>.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.StorageInfoUtils">
+            <summary>
+            Collects drive capacity and sequential I/O performance metrics.
+            + Measures read/write speed using temporary files.
+            - Requires write access to each drive and may trigger disk activity.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.io.driveinfo"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.StorageInfoUtils.GetStorageInfos">
+            <summary>
+            Enumerates storage devices with capacity and simple performance stats.
+            + Provides read/write throughput in MB/s.
+            - Results may fluctuate due to filesystem caching.
+            Example JSON:
+            <code language="json">
+            [{ "name": "root", "totalSize": 1000000 }]
+            </code>
+            </summary>
+            <returns>A <see cref="T:Ark.Result`1"/> containing <see cref="T:Ark.Infrastructure.Info.StorageInfoDto"/> items.</returns>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.StorageInfoUtils.MeasurePerformance(System.String)">
+            <summary>
+            Measures sequential read and write speed for a given path.
+            + Uses a 1&#160;MB buffer to estimate throughput.
+            - Deletes a temporary file; repeated tests may affect SSD lifespan.
+            </summary>
+            <param name="path">Directory on which to benchmark I/O.</param>
+            <returns>Tuple containing read and write speeds in MB/s.</returns>
+        </member>
+        <member name="T:Ark.Infrastructure.Info.WindowsStorageInfoProvider">
+            <summary>
+            Retrieves storage information on Windows platforms.
+            </summary>
+        </member>
+        <member name="M:Ark.Infrastructure.Info.WindowsStorageInfoProvider.GetStorageInfos">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

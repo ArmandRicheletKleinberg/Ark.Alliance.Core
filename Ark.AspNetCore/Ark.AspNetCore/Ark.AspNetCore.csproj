@@ -1,0 +1,80 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Armand Richelet-Kleinberg</Authors>
+    <Company>M2H.IO</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Ark project</Description>
+		<Configurations>Debug;Release</Configurations>
+		<GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DocumentationFile>.\Ark.AspNetCore.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="CodeGen\DataContext\**" />
+		<EmbeddedResource Remove="CodeGen\DataContext\**" />
+		<None Remove="CodeGen\DataContext\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="appsettings.json.schema" />
+		<None Remove="Ark.AspNetCore.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="appsettings.json.schema">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="9.0.8" />
+                <!--<PackageReference Include="Microsoft.AspNetCore.Hosting" Version="7.0.0" />-->
+                <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.8" />
+                <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+                <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.3" />
+                <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
+        </ItemGroup>
+
+        <ItemGroup>
+                <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        </ItemGroup>
+
+        <ItemGroup>
+                 <ProjectReference Include="..\..\Ark.Api.Binance\Ark.Api.Binance.csproj" />
+                 <ProjectReference Include="..\..\Ark.Net\Ark.Net.CrossCutting\Ark.Net.CrossCutting.csproj" />
+                <ProjectReference Include="..\..\Ark.System\Ark.Core.Systeminfo\Ark.Infrastructure.Info.csproj" />
+        </ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\AspNetCoreTexts.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AspNetCoreTexts.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\AspNetCoreTexts.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>AspNetCoreTexts.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="CodeGen\" />
+	</ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+</Project>

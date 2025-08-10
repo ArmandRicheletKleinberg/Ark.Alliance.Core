@@ -1,0 +1,1354 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ark.AspNetCore</name>
+    </assembly>
+    <members>
+        <member name="T:Ark.AspNetCore.AppControllerBase`1">
+            <inheritdoc />
+            <summary>
+            This controller allows the client to get some information about this application like version and release notes.
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data if any, object if none.</typeparam>
+        </member>
+        <member name="F:Ark.AspNetCore.AppControllerBase`1.Releases">
+            <summary>
+            The application release versions are kept in memory cache to avoid recreating them at each call.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.GetInfo">
+            <summary>
+            Gets the app info.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            The user is authenticated for the app.
+            ## Description ##
+            This service is used by the client to show to the user the release notes.
+            ## Example ##
+            ```
+            GET app/info
+            ```
+            *The app info are returned.*  
+            </remarks>
+            <response code="200">
+            **Success** - The app info are returned.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The user is not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.GetReleases(System.String)">
+            <summary>
+            Gets the app releases notes info optionally from a given version.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            The user is authenticated for the app.
+            ## Description ##
+            This service is used by the client to show to the user the release notes.
+            ## Example ##
+            ```
+            GET app/releases?fromVersion=1.04.00
+            ```
+            *All the release notes from the version 1.04.00 not included are returned.*  
+            </remarks>
+            <response code="200">
+            **Success** - The app releases notes info are returned.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The user is not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.ExtractReleases">
+            <summary>
+            Extract the release info from the readme.md content file.
+            Searches for the part starting with H1 title # Release Notes until the next H1 title.
+            </summary>
+            <returns>The extracted release info.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.CreateReleases(System.Collections.Generic.List{System.String})">
+            <summary>
+            Creates the releases which begin with line starting with ##.
+            ie ## V1.01.00 : 27/04/2020.
+            </summary>
+            <param name="releaseNoteLines">All the lines from the release notes.</param>
+            <returns>An enumerable with the release created.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.CreateRelease(System.Collections.Generic.List{System.String})">
+            <summary>
+            Creates a single release given the release lines.
+            </summary>
+            <param name="releaseLines">The release lines to parse for info.</param>
+            <returns>The created release.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AppControllerBase`1.CreateReleaseNotesCategories(System.Collections.Generic.List{System.String})">
+            <summary>
+            Creates the release categories from the release lines which starts with ### title.
+            </summary>
+            <param name="releaseLines">The lines from a single release.</param>
+            <returns>The release categories from the release lines which starts with ### title.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.ArchiveControllerBase`1">
+            <inheritdoc />
+            <summary>
+            This is the base class used to manage the archives of an application.
+            This class should be overriden in another project controller to allow access to the users management.
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data if any, object if none.</typeparam>
+        </member>
+        <member name="F:Ark.AspNetCore.ArchiveControllerBase`1.CrossCuttingArchiveService">
+            <summary>
+            The archive cross cutting services are needed.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.ArchiveControllerBase`1.PostStoreDocument(Ark.Net.CrossCutting.Models.ArchiveToCreateDto)">
+            <summary>
+            Stores a document archive in the database along with its metadata.
+            </summary>
+            <param name="archive">The document archive to upload.</param>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to add archives.
+            ## Example ##
+            ```
+            POST archive
+            BODY { ... }
+            ```
+            *Add a new archive.*  
+            </remarks>
+            <response code="200">
+            **Success** - The document has been saved successfully in database.
+            **BadParameters** - The file has not been provided.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the archive services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizationSettings">
+            <summary>
+            Configuration options controlling how authorization is performed in the API.
+            + Supports multiple strategies via <see cref="T:Ark.AspNetCore.AuthorizationTypeEnum"/>.
+            - Short timeouts or wrong types can lock users out unexpectedly.
+            Ref: <see href="https://learn.microsoft.com/aspnet/core/security/authorization/introduction"/>
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.AuthorizationSettings.Type">
+            <summary>
+            Gets or sets the authorization provider.
+            + Defaults to <see cref="F:Ark.AspNetCore.AuthorizationTypeEnum.CrossCutting"/> for centralized security.
+            - Setting to <see cref="F:Ark.AspNetCore.AuthorizationTypeEnum.None"/> exposes endpoints publicly.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.AuthorizationSettings.UserSessionTimeout">
+            <summary>
+            Gets or sets the duration a user session remains valid before re-authentication is required.
+            + Enhances security by expiring stale sessions.
+            - Very small values may degrade user experience.
+            Example: <c>00:30:00</c> for 30 minutes.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizationTypeEnum">
+            <summary>
+            Defines supported authorization strategies for the API.
+            + Encapsulates differing back-end validation mechanisms.
+            - Introducing a new strategy requires code changes across the stack.
+            Ref: <see href="https://learn.microsoft.com/aspnet/core/security/authorization/"/>
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizationTypeEnum.None">
+            <summary>
+            No authorization is enforced; use only for development scenarios.
+            + Simplifies initial prototypes.
+            - Exposes every endpoint publicly.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizationTypeEnum.Fake">
+            <summary>
+            Uses in-memory fake authentication for testing flows.
+            + Allows UI tests without external dependencies.
+            - Must never be enabled in production.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizationTypeEnum.CrossCutting">
+            <summary>
+            Relies on centralized Cross Cutting Services to validate users.
+            + Provides unified permissions across applications.
+            - Requires network connectivity to the Cross Cutting service.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizationTypeEnum.ActiveDirectory">
+            <summary>
+            Uses Windows Active Directory for authorization.
+            + Leverages existing domain accounts.
+            - Tightly couples the application to AD infrastructure.
+            Ref: <see href="https://learn.microsoft.com/aspnet/core/security/authentication/windowsauth"/>
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizeAttribute">
+            <inheritdoc />
+            <summary>
+            This attribute must be set on resources that need to be accessed by an user with the correct permission.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeAttribute.#ctor">
+            <inheritdoc />
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.AuthorizeAttribute" /> instance.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeAttribute.#ctor(System.String)">
+            <inheritdoc />
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.AuthorizeAttribute" /> instance.
+            </summary>
+            <param name="permission">The permission required to access this resource.</param>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizeFilter">
+            <inheritdoc />
+            <summary>
+            This is the base class for the authorization filter used in the DSS application.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeFilter.CrossCuttingUserServices">
+            <summary>
+            The cross cutting user services are needed.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeFilter.UserSessionCacheRepository">
+            <summary>
+            The user session business logic is needed for all authorization.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeFilter._userProfileDateType">
+            <summary>
+            The type of the class that contains the user data profile.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeFilter._permission">
+            <summary>
+            The permission required to access this resource.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeFilter.#ctor(Ark.AspNetCore.ServerConfig,System.String)">
+            <summary>
+            Creates a new <see cref="T:Ark.AspNetCore.AuthorizeFilter"/> instance.
+            </summary>
+            <param name="serverConfig">The configuration of the server (injected).</param>
+            <param name="permission">The permission needed to access the resource.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeFilter.OnAuthorizationAsync(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeFilter.CreateResult(System.Net.HttpStatusCode,System.String)">
+            <summary>
+            Creates a response result with an HTTP code and a reason.
+            The reason will be displayed only in some environments.
+            </summary>
+            <param name="code">The HTTP code to set in the response.</param>
+            <param name="reason">The reason to give to the user (only in some environments).</param>
+            <returns>The created ContentResult.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeFilter.CreateUserSession(System.Type,Ark.Net.Models.UserAppProfileDto)">
+            <summary>
+            Converts a user app profile DTO to an user session.
+            </summary>
+            <param name="profileDataType">The type of the profile data to convert.</param>
+            <param name="profile">The profile to convert.</param>
+            <returns>The user session to create.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeFilter.DeserializeProfileData(System.Type,System.String)">
+            <summary>
+            Deserializes the profile data JSON into the needed type.
+            </summary>
+            <param name="profileDataType">The type of the profile data to convert.</param>
+            <param name="profileDataJson">The rax JSON of the profile data.</param>
+            <returns>The deserialized project of the needed type if success or an empty object if none.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizeApplicationAttribute">
+            <inheritdoc />
+            <summary>
+            This attribute must be set on resources that need to be accessed by one or more specific applications defined in the Authorization/Applications section of the  appsettings.json file.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeApplicationAttribute.#ctor(System.String[])">
+            <inheritdoc />
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.AuthorizeAttribute" /> instance.
+            By default, this allows all the applications defined in the Authorization/Applications section of the appsettings.json file.
+            But this can be restrain to some allowed applications which will need to be defined.
+            </summary>
+            <param name="allowedApplications">The applications allowed to access this resource, if none then all the applications defined in the settings.</param>
+        </member>
+        <member name="T:Ark.AspNetCore.AuthorizeApplicationFilter">
+            <inheritdoc />
+            <summary>
+            This is the base class for the application authorization filter used in the DSS application.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeApplicationFilter._applicationAllowedIdentities">
+            <summary>
+            The application 
+            Keeps this in static with lazy loading for performance purpose.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.AuthorizeApplicationFilter._allowedApplications">
+            <summary>
+            The permission required to access this resource.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeApplicationFilter.#ctor(System.String[])">
+            <summary>
+            Creates a new <see cref="T:Ark.AspNetCore.AuthorizeFilter"/> instance.
+            </summary>
+            <param name="allowedApplications">The applications allowed to access this resource, if none then all the applications defined in the settings.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeApplicationFilter.OnAuthorization(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)">
+            <inheritdoc />
+            <summary>
+            Checks the authorization.
+            </summary>
+            <param name="context">The HTTP context to search for data.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.AuthorizeApplicationFilter.CreateResult(System.Net.HttpStatusCode,System.String)">
+            <summary>
+            Creates a response result with an HTTP code and a reason.
+            The reason will be displayed only in some environments.
+            </summary>
+            <param name="code">The HTTP code to set in the response.</param>
+            <param name="reason">The reason to give to the user (only in some environments).</param>
+            <returns>The created ContentResult.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.DiagnosticsControllerBase`1">
+            <inheritdoc />
+            <summary>
+            This is the base class used to give diagnostics details to a client app.
+            This class should be overriden in another project controller to allow access to the diagnostics data.
+            Security must be set to allow only super admin to connect this controller.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.DiagnosticsControllerBase`1.GetDiagnosticInfo">
+            <summary>
+            Gets the diagnostics info that is the reports available the categories of the log and some other module diagnostics API.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            Allowed super admin user.
+            ## Description ##
+            This generic service is used in diagnostic page.
+            ## Example ##
+            ```
+            GET api/diagnostics/info
+            ```
+            Gets the diagnostic info that is the reports available the categories of the log and some other module diagnostics API.
+            </remarks>
+            <response code="200">
+            **Success** - The diagnostic info found are returned.
+            **BadParameters** - Either the source or the log name.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">User not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DiagnosticsControllerBase`1.GetLogs(Ark.Net.Models.DataQueryDto,System.String)">
+            <summary>
+            Returns all the filtered application logs.
+            </summary>
+            <param name="query">The query with the paging/filter/order to apply.</param>
+            <param name="tableName">The name of the table to query.</param>
+            <remarks>
+            ## Permissions ##
+            Allowed technical user of another app.
+            ## Description ##
+            This generic service is use in diagnostic page.
+            ## Example ##
+            ```
+            GET api/diag/logs?filterTimeFrom=2019-03-05T11:01:28.365Z&amp;filterLevel=Information
+            ```
+            Gets the application logs crated after the 05/03/2018 11:01:28 with the level Information.
+            </remarks>
+            <response code="200">
+            **Success** - The filtered logs found are returned.
+            **BadParameters** - Either the source or the log name.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">User not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DiagnosticsControllerBase`1.GetIndicators">
+            <summary>
+            Returns all the app diagnostics indicators.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            User with super admin permission.
+            ## Description ##
+            This generic service is use in diagnostic page.
+            ## Example ##
+            ```
+            GET api/diagnostics/indicators
+            ```
+            Gets the application indicators.
+            </remarks>
+            <response code="200">
+            **Success** - The indicators found are returned.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">User not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DiagnosticsControllerBase`1.FindReport(System.String)">
+            <summary>
+            Finds a report data given its name.
+            </summary>
+            <param name="reportName">The name of the report to request.</param>
+            <remarks>
+            ## Permissions ##
+            User with super admin permission.
+            ## Description ##
+            This generic service is use in diagnostic page.
+            ## Example ##
+            ```
+            GET api/reports/queueCertificatsInput
+            ```
+            Gets the report "queueCertificatsInput" with returns the first 10 messages of the queue input for Certificats.
+            </remarks>
+            <response code="200">
+            **Success** - The raw report data is returned.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">User not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="P:Ark.AspNetCore.DiagnosticsControllerBase`1.SqlServerConnectionString">
+            <summary>
+            The SQL SERVER connection string to connect the logs database.
+            Gets from the Logging Configuration first from the connection string then from the database shortcut if any.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.DiagnosticsControllerBase`1.SqlServerLogsTableName">
+            <summary>
+            The SQL SERVER logs database table name.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.DynamicMappingControllerBase`1">
+            <inheritdoc />
+            <summary>
+            This is the base class used to manage the dynamic mappings of an application.
+            This class should be overriden in another project controller to allow access to the dynamic mappings management.
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data if any, object if none.</typeparam>
+        </member>
+        <member name="F:Ark.AspNetCore.DynamicMappingControllerBase`1.CrossCuttingDynamicMappingServices">
+            <summary>
+            The dynamic mapping cross cutting services are needed.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.GetDynamicMappings">
+            <summary>
+            This method returns all the dynamic methods for an application.
+            </summary>
+            <remarks>
+            ## Description ##
+            This service is used by some application to get their dynamic mappings
+            ## Example ##
+            ```
+            GET dynamicmappings
+            ```
+            </remarks>
+            <response code="200">
+            Success : All dynamic mappings of the application are returned.
+            Unauthorized : The user is not allowed to access the app.
+            Unexpected : An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.GetDynamicMapping(System.Int32)">
+            <summary>
+            This method returns a dynamic mapping with his last version.
+            </summary>
+            <param name="id">The identifier of the dynamic mapping.</param>
+            <remarks>
+            ## Description ##
+            This service is used by applications to get and compile a dynamic mapping.
+            ## Example ##
+            ```
+            GET dynamicmapping/1
+            ```
+            </remarks>
+            <response code="200">
+            Success: The dynamic mapping has been successfully returned.
+            BadParameters: The predicate is null.
+            Failure: The predicate returns more than one dynamic mapping.
+            NotFound: No dynamic mapping was found using this predicate.
+            Unexpected: Unexpected failure.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.GetDynamicMappingVersions(System.Int32)">
+            <summary>
+            This method returns versions of a dynamic mapping
+            </summary>
+            <param name="id">The identifier of the dynamic mapping.</param>
+            <remarks>
+            ## Description ##
+            This service is used by some application to see the different versions of a dynamic mapping.
+            ## Example ##
+            ```
+            GET dynamicmapping/1/versions
+            ```
+            </remarks>
+            <response code="200">
+            Success: All the versions have been successfully returned.
+            BadParameters: The identifier is null.
+            Failure: The identifier returns more than one dynamic mapping.
+            NotFound: No dynamic mapping was found using this predicate.
+            Unexpected: Unexpected failure.
+            Unauthorized: The user is not allowed to access the app.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.GetDynamicMappingVersionExcel(System.Int32,System.Int32)">
+            <summary>
+            Return excel file of a version of a dynamic mapping.
+            </summary>
+            <param name="id">The identifier of the dynamic mapping.</param>
+            <param name="version">Version of the dynamic mapping.</param>
+            <remarks>
+            ## Description ##
+            This service is used by some application to download the excel document of the dynamic mapping.
+            ## Example ##
+            ```
+            GET dynamicmapping/1/version/1/excel
+            ```
+            </remarks>
+            <response code="200">
+            Success: The file has been successfully returned.
+            BadParameters: The identifier is null.
+            Failure: The predicate returns more than one version.
+            NotFound: No version was found using this predicate.
+            Unexpected: Unexpected failure.
+            Unauthorized: The user is not allowed to access the app.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.PostNewDynamicMappingVersionExcel(System.Int32,Ark.Net.Models.DynamicMappingFileDto,System.Boolean)">
+            <summary>
+            Create a new version of a dynamic mapping based on a excel file.
+            </summary>
+            <param name="id">The identifier of the dynamic mapping.</param>
+            <param name="dynamicMappingFile">The Dto with all the necessary informations to save a new version of a dynamic mapping.</param>
+            <param name="isSaving">If it's true, save the new dynamic mapping, if it's false only make the validation.</param>
+            <remarks>
+            ## Description ##
+            This service is used by some application to create a new version of the dynamic mapping.
+            ## Example ##
+            ```
+            POST dynamicmapping/1/excel
+            ```
+            </remarks>
+            <response code="200">      
+            Success: The excel file is uploaded and the new version is created.
+            BadParameters: the excel file contains errors which are in the Validation result Dto. 
+            Failure: The identifier returns more than one entity.
+            NotFound: No dynamic mapping was for this identifier.
+            Unexpected: Unexpected failure.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.DynamicMappingControllerBase`1.PostDynamicMappingVersionRollback(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Rollback to a previous version of the dynamic mapping. 
+            </summary>
+            <param name="id">The identifier of the dynamic mapping.</param>
+            <param name="version">Version of the dynamic mapping.</param>
+            <param name="userId">The identifier of the user which launches the rollback</param>
+            <param name="remark">Remark by the user.</param>
+            <remarks>
+            ## Description ##
+            This service is used by some application to rollback to a previous version of a dynamic mapping.
+            ## Example ##
+            ```
+            POST dynamicmapping/1/version/1/rollback?userId=E029888&amp;remark=correction
+            ```
+            </remarks>
+            <response code="200">
+            Success: The rollback has been successfully done.
+            BadParameters: The identifier is null.
+            Failure: The predicate returns more than one version.
+            NotFound: No version was found using this predicate.
+            Already : The version is already the last version of the dynamic mapping.
+            Unexpected: Unexpected failure.
+            Unauthorized: The user is not allowed to access the app.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="T:Ark.AspNetCore.IFormFileExtensions">
+            <summary>
+            This class extend the <see cref="T:Microsoft.AspNetCore.Http.IFormFile"/> class.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.IFormFileExtensions.GetFileContent(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Gets all the content from a HTTP form file.
+            It actively waits all the file stream has been uploaded.
+            </summary>
+            <param name="file">The form file.</param>
+            <returns>The file content read from the HTTP form file.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.IServiceCollectionExtensions">
+            <summary>
+            This class extend the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> class.
+            This contains a lot of useful ASP .NET Core features out of the box.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.IServiceCollectionExtensions.GenericStartupFilter">
+            <summary>
+            This helper generic class is used to add startup filters more easily.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.IServiceCollectionExtensions.GenericStartupFilter._startupFunction">
+            <summary>
+            The function to execute at application startup.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.IServiceCollectionExtensions.GenericStartupFilter.#ctor(System.Func{System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder},System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder}})">
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.IServiceCollectionExtensions.GenericStartupFilter"/> instance.
+            </summary>
+            <param name="startupFunction"> The function to execute at application startup.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.IServiceCollectionExtensions.GenericStartupFilter.Configure(System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder})">
+            <inheritdoc />
+        </member>
+        <member name="M:Ark.AspNetCore.IServiceCollectionExtensions.AddStartupFilter(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder},System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder}})">
+            <summary>
+            Adds a function to execute on application startup.
+            The next delegate is used to execute the other startup filter either before or after this code.
+            Mainly used as syntactic sugar to avoid creating a IStartupFilter implemented class.
+            Used it like next => app => { ...; next(app); return app; }.
+            </summary>
+            <param name="services">The services collection to add the startup filter to.</param>
+            <param name="startupFunction">The function to execute at application startup.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.IServiceCollectionExtensions.AddArkAspNetCore(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Registers default Ark.AspNetCore services such as MVC controllers and Swagger.
+            </summary>
+            <param name="services">The service collection to configure.</param>
+            <returns>The configured service collection.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.MediatRExtensions">
+            <summary>
+            Provides helper methods to register MediatR handlers.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.MvcStartupFilter">
+            <summary>
+            This class is used as an helper to setup quickly a default MVC implementation as a Middleware.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.MvcStartupFilter.Configure(System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder})">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.AspNetCore.ServerConfig">
+            <summary>
+            Provides server-wide configuration for user session management.
+            + Centralizes the <see cref="P:Ark.AspNetCore.ServerConfig.UserDataProfileType"/> used across the application.
+            - Misconfiguration may prevent profile data serialization.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.type"/>
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.ServerConfig.UserDataProfileType">
+            <summary>
+            Gets or sets the CLR <see cref="T:System.Type"/> describing the user-specific profile payload.
+            + Enables strongly typed profile data when constructing <see cref="T:Ark.AspNetCore.UserSession`1"/>.
+            - A mismatched type results in an empty profile being created.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.SwaggerExcludeExceptionSchemaFilter">
+            <summary>
+            This schema filter is used to remove the Exception properties from the model view.
+            This has to be done because of a problem with Exception complex type in Swashbuckle RC5.0.2.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.SwaggerExcludeExceptionSchemaFilter.Apply(Microsoft.OpenApi.Models.OpenApiSchema,Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.AspNetCore.SwaggerStartupFilter">
+            <summary>
+            This class is used as an helper to setup quickly a default Swagger implementation as a Middleware.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.SwaggerStartupFilter._info">
+            <summary>
+            The swagger document info to display in the Swagger UI.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.SwaggerStartupFilter.#ctor(Microsoft.OpenApi.Models.OpenApiInfo)">
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.SwaggerStartupFilter"/> instance.
+            </summary>
+            <param name="info">The swagger document info to display in the Swagger UI.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.SwaggerStartupFilter.Configure(System.Action{Microsoft.AspNetCore.Builder.IApplicationBuilder})">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.AspNetCore.WebHostExtended">
+            <summary>
+            This class extend the WebHost class to allow it to run either as a console app (IIS, HTTP.Sys, VS20xx) or as a Windows service.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.WebHostExtended.RunWebHostInConsoleOrAsWindowsService(System.String[],System.Action{Microsoft.Extensions.Hosting.IHostBuilder})">
+            <summary>
+            Creates and builds the WebHostBuilder and run the hosts either in console or in a Windows service.
+            By default the application will be launched as a Windows service unless a debugger is attached (VS20xx) or if the application is launched with the --console parameter.
+            Setups the environment/module to run the application into by reading the appenvironment.json file if any.
+            </summary>
+            <param name="builderAppendAction">The action to execute on the created builder to append some services before building it.</param>
+            <param name="args">The startup parameters of the application.</param>
+        </member>
+        <member name="T:Ark.AspNetCore.SystemInfoControllerBase`1">
+            <summary>
+            Base controller exposing system information APIs.
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data.</typeparam>
+        </member>
+        <member name="M:Ark.AspNetCore.SystemInfoControllerBase`1.GetServices(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the services information for the current machine.
+            </summary>
+            <param name="namePattern">Optional pattern the service name must start with.</param>
+            <param name="publisher">Optional publisher contained in the executable.</param>
+            <param name="eventLogMinutes">Time span in minutes for returned event logs.</param>
+            <returns>The services information.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.Resources.AspNetCoreTexts">
+            <summary>
+              Une classe de ressource fortement typée destinée, entre autres, à la consultation des chaînes localisées.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.Resources.AspNetCoreTexts.ResourceManager">
+            <summary>
+              Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.Resources.AspNetCoreTexts.Culture">
+            <summary>
+              Remplace la propriété CurrentUICulture du thread actuel pour toutes
+              les recherches de ressources à l'aide de cette classe de ressource fortement typée.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.BinanceOrderController`1">
+            <summary>
+            Controller exposing operations to manage Binance futures orders.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceOrderController`1.PlaceOrder(System.Guid,Ark.Api.Binance.FuturesOrder)">
+            <summary>
+            Places a new futures order for the specified session.
+            </summary>
+            <param name="sessionId">Identifier of the session.</param>
+            <param name="order">Order parameters.</param>
+            <returns>The created order result.</returns>
+            <remarks>
+            ## Example ##
+            ```
+            POST api/binance/sessions/{sessionId}/orders
+            ```
+            </remarks>
+            <response code="200">Success - order created.</response>
+            <response code="404">Session not found.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceOrderController`1.ModifyOrder(System.Guid,System.Int64,Ark.Api.Binance.FuturesOrder)">
+            <summary>
+            Replaces an existing order by cancelling it and creating a new one.
+            </summary>
+            <param name="sessionId">Identifier of the session.</param>
+            <param name="orderId">Identifier of the order to replace.</param>
+            <param name="order">New order details.</param>
+            <returns>The result of the newly placed order.</returns>
+            <remarks>
+            ## Example ##
+            ```
+            PUT api/binance/sessions/{sessionId}/orders/{orderId}
+            ```
+            </remarks>
+            <response code="200">Success - order replaced.</response>
+            <response code="404">Session not found.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceOrderController`1.CancelOrder(System.Guid,System.String,System.Int64)">
+            <summary>
+            Cancels an existing order.
+            </summary>
+            <param name="sessionId">Identifier of the session.</param>
+            <param name="symbol">Trading symbol.</param>
+            <param name="orderId">Identifier of the order to cancel.</param>
+            <returns>A <see cref="T:Ark.Result"/> describing the cancellation.</returns>
+            <remarks>
+            ## Example ##
+            ```
+            DELETE api/binance/sessions/{sessionId}/orders/{orderId}
+            ```
+            </remarks>
+            <response code="200">Success - order cancelled.</response>
+            <response code="404">Session not found.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceOrderController`1.TransferFuturesToFunding(System.Guid,System.String,System.Decimal)">
+            <summary>
+            Transfers funds from the futures wallet to the funding wallet.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceOrderController`1.TransferFundingToFutures(System.Guid,System.String,System.Decimal)">
+            <summary>
+            Transfers funds from the funding wallet to the futures wallet.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.BinanceSessionControllerBase`1">
+            <summary>
+            Controller exposing operations to manage Binance client sessions.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceSessionControllerBase`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ark.AspNetCore.BinanceSessionControllerBase`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceSessionControllerBase`1.CreateSession(Ark.Api.Binance.BinanceOptions)">
+            <summary>
+            Creates a new Binance client session.
+            </summary>
+            <param name="options">Options used to configure the client.</param>
+            <returns>The identifier of the created session.</returns>
+            <remarks>
+            ## Example ##
+            ```json
+            POST api/binance/sessions
+            ```
+            </remarks>
+            <response code="200">Success - session created.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceSessionControllerBase`1.GetSessionOptions(System.Guid)">
+            <summary>
+            Gets the options used when the session was created.
+            </summary>
+            <param name="id">Identifier of the session.</param>
+            <returns>The stored options or NotFound if the session does not exist.</returns>
+            <remarks>
+            ## Example ##
+            ```
+            GET api/binance/sessions/{id}
+            ```
+            </remarks>
+            <response code="200">Success - session options returned.</response>
+            <response code="404">Session not found.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceSessionControllerBase`1.GetSessionOverview(System.Guid,Ark.TimeWindow)">
+            <summary>
+            Retrieves aggregated session data including orders, positions
+            and ticker history for the given time window.
+            </summary>
+            <param name="id">Session identifier.</param>
+            <param name="window">Time window used to filter data.</param>
+            <remarks>
+            ## Example ##
+            ```
+            GET api/binance/sessions/{id}/overview?window=1.00:00:00
+            ```
+            </remarks>
+            <response code="200">Success - session overview returned.</response>
+            <response code="404">Session not found.</response>
+            <response code="500">Unexpected error.</response>
+        </member>
+        <member name="M:Ark.AspNetCore.BinanceSessionControllerBase`1.Ping">
+            <summary>
+            Simple ping endpoint used for health checks.
+            </summary>
+            <returns>"pong" if the service is reachable.</returns>
+            <remarks>
+            ## Example ##
+            ```
+            GET api/binance/ping
+            ```
+            </remarks>
+            <response code="200">Service reachable.</response>
+        </member>
+        <member name="T:Ark.AspNetCore.UserSession">
+            <summary>
+            The user session long with the user profile data.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserId">
+            <summary>
+            The identifier of the user.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserFirstName">
+            <summary>
+            The first name of the user.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserLastName">
+            <summary>
+            The last name of the user.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserEmail">
+            <summary>
+            The email address of the user if any.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserPhone">
+            <summary>
+            The user phone number if any.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.UserPicture">
+            <summary>
+            The bytes content of the user picture if any.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.Permissions">
+            <summary>
+            The permissions given to the user in the application.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.ProfileData">
+            <summary>
+            Some optional profile data of the user in the application.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.App">
+            <summary>
+            The information about the connected app for the user.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.AppEnvironments">
+            <summary>
+            The different environments of the connected app.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession.AppsAvailable">
+            <summary>
+            The other apps available to the user.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.UserSession`1">
+            <inheritdoc />
+            <summary>
+            A generic UserSession with the strongly typed profile data.
+            </summary>
+            <typeparam name="TProfileData">The type of the profile data.</typeparam>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSession`1.ProfileData">
+            <summary>
+            Some optional profile data of the user in the application.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.UserSessionCacheRepository">
+            <inheritdoc />
+            <summary>
+            Ce repository de cache garde les informations de l'utilisateur en mémoire.
+            La durée de validité de ce cache est la durée maximale de session utilisateur.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.UserSessionCacheRepository._validityTimeSpan">
+            <summary>
+            Lazy loaded and kept in static for performance purpose.
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.UserSessionCacheRepository.ValidityTimeSpan">
+            <inheritdoc />
+        </member>
+        <member name="T:Ark.AspNetCore.UserSessionManager">
+            <summary>
+            This manager is used to manage the user sessions.
+            </summary>
+        </member>
+        <member name="T:Ark.AspNetCore.UsersControllerBase`1">
+            <inheritdoc />
+            <summary>
+            This is the base class used to authenticate/authorize and mange the users.
+            This class should be overriden in another project controller to allow access to the users management.
+            Security must be set to allow only super admin to connect this controller.
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data if any, object if none.</typeparam>
+        </member>
+        <member name="F:Ark.AspNetCore.UsersControllerBase`1.CrossCuttingUserServices">
+            <summary>
+            The user cross cutting services are needed.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.GetCurrentUserSession">
+            <summary>
+            Gets the current logged user session info along with its profile data and permissions.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            The user is authenticated for the app.
+            ## Description ##
+            This service is used by the client to get the user profile data.
+            ## Example ##
+            ```
+            GET user
+            BODY { ... }
+            ```
+            *The logged user profile data are returned.*  
+            </remarks>
+            <response code="200">
+            **Success** - The user has been found for this app and its profile data are returned.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The user is not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.GetCurrentUserAvatar">
+            <summary>
+            Returns the user avatar from the current logged user session if any.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            The user is authenticated for the app.
+            ## Description ##
+            This service is used by the client to display an user avatar.
+            ## Example ##
+            ```
+            GET user/avatar
+            ```
+            *The user avatar picture if any or 404 otherwise.*
+            </remarks>
+            <response code="200">The user avatar file content is returned.</response>
+            <response code="401">The user is not authenticated.</response>
+            <response code="404">The user avatar has not been provided</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.SaveUserAvatar(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Saves the user avatar picture.
+            The picture will be resized and converted to webp image format.
+            </summary>
+            <param name="file">The uploaded file.</param>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by all application to allow the user to change its avatar picture.
+            ## Example ##
+            ```
+            PUT user/avatar
+            BODY { Form file }
+            ```
+            *The current user avatar is updated in database.*
+            </remarks>
+            <response code="200">
+            **Success** - The user avatar has been successfully updated.
+            **BadParameters** - No picture file content has been sent.
+            **NotFound** - No user has been found for this app.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.SaveUserProfileDataForApp(`0)">
+            <summary>
+            Saves the user profile data for the application.
+            </summary>
+            <param name="profileData">The new profile data of the user.</param>
+            <remarks>
+            ## Permissions ##
+            The user is authenticated for the app.
+            ## Description ##
+            This service is used by some application to keep the user preferences.
+            ## Example ##
+            ```
+            PUT user/profile
+            BODY { ... }
+            ```
+            *The logged user preferences are stored in the application user profile data.*  
+            </remarks>
+            <response code="200">
+            **Success** - The user has been found for this app and its data has been saved.
+            **BadParameters** - The profile data must not be null or empty.
+            **NotFound** - No user has been found for this app.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The user is not authenticated.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.GetApplicationsForUserWithPermissions">
+            <summary>
+            Lists all the applications available for an user along with its permissions.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to list the apps allowed for the user.
+            ## Example ##
+            ```
+            GET user/apps
+            ```
+            *Returns the applications allowed for the connected user.*  
+            </remarks>
+            <response code="200">
+            **Success** - The apps allowed for the user are returned along with his permissions.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.GetAllUserRoles">
+            <summary>
+            Gets all the user roles for an application.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to manage the users.
+            ## Example ##
+            ```
+            GET users
+            ```
+            *Lists all the users allowed for this application.*  
+            </remarks>
+            <response code="200">
+            **Success** - The users allowed for this application.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.GetAllAllowedUsers">
+            <summary>
+            Gets all the users allowed for an application.
+            </summary>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to manage the users.
+            ## Example ##
+            ```
+            GET users
+            ```
+            *Lists all the users allowed for this application.*  
+            </remarks>
+            <response code="200">
+            **Success** - The users allowed for this application.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.AllowNewUserToApp(Ark.Net.Models.UserDto)">
+            <summary>
+            Allows a new user for the app.
+            If the user does not exist in the Cross Cutting database, he is created.
+            </summary>
+            <param name="user">The user to add.</param>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to manage the users.
+            ## Example ##
+            ```
+            POST user
+            BODY { ... }
+            ```
+            *Adds a new user allowed for this application.*  
+            </remarks>
+            <response code="200">
+            **Success** - The user has been allowed for this application.
+            **Unexpected** - An unexpected error occurs.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.UpdateUser(Ark.Net.Models.UserDto)">
+            <summary>
+            Updates the user information with its role.
+            </summary>
+            <param name="user">The data of the user to update.</param>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to manage the users.
+            ## Example ##
+            ```
+            PUT user
+            BODY { ... }
+            ```
+            *Updates an existing user for this application.*  
+            </remarks>
+            <response code="200">
+            **Success** - The update succeeded.
+            **NotFound** - No link between the user and the app has been found.
+            **Unauthorized** - The user is not allowed to access the app.
+            **Unexpected** - Unexpected failure.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.UsersControllerBase`1.RemoveUserFromApplication(System.String)">
+            <summary>
+            Removes an user from an application access.
+            It keeps the data of the user but he is flagged as not allowed for this app.
+            </summary>
+            <param name="userId">The identifier of the user to remove.</param>
+            <remarks>
+            ## Permissions ##
+            Request coming from allowed remote endpoint.
+            ## Description ##
+            This service is used by some application to manage the users.
+            ## Example ##
+            ```
+            DELETE user/ARMONY&#x5c;e029900
+            ```
+            *Removes an existing user from this application access.*  
+            </remarks>
+            <response code="200">
+            **Success** - The update succeeded, the user is no more allowed for this application.
+            **NotFound** - No link between the user and the app has been found.
+            **Unexpected** - Unexpected failure.
+            </response>
+            <response code="401">The application is not allowed to access the user services from the CrossCutting services.</response>
+            <returns></returns>
+        </member>
+        <member name="T:Ark.AspNetCore.ControllerBase">
+            <inheritdoc />
+            <summary>
+            Ce contrôleur doit être hérité par tous les contrôleurs utilisé dans le projet.
+            L'attribut ResponseCache est utilisé pour forcer les navigateurs à ne pas cacher les réponses de l'API (utile pour IE).
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.ControllerBase.Logger">
+            <summary>
+            The logger used to log controllers failed results.
+            </summary>
+        </member>
+        <member name="F:Ark.AspNetCore.ControllerBase.IsLoggingOnlyUnexpectedResult">
+            <summary>
+            Whether to log only the unexpected result, otherwise log all the result that did not succeed.
+            </summary>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.#ctor(Microsoft.Extensions.Logging.ILogger,System.Boolean)">
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.ControllerBase"/> instance.
+            </summary>
+            <param name="logger">The logger used to log the failed request results.</param>
+            <param name="isLoggingOnlyUnexpectedResult">Whether to log only the unexpected result, otherwise log all the result that did not succeed.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.ExecuteBlAsync``1(System.Func{System.Threading.Tasks.Task{Ark.Result{``0}}})">
+            <summary>
+            Execute some business logic asynchronously and returns a consistent HttpResponseDto which own the data to be returned along with some status.
+            </summary>
+            <typeparam name="TReturn">The type of the data returned by the Business Logic.</typeparam>
+            <param name="blFunctionToExecute">The business logic function to execute.</param>
+            <returns>A consistent HttpResponseDto filled with the returned data if any and the status.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.ExecuteBl``1(System.Func{Ark.Result{``0}})">
+            <summary>
+            Execute some business logic and returns a consistent HttpResponseDto which own the data to be returned along with some status.
+            </summary>
+            <typeparam name="TReturn">The type of the data returned by the Business Logic.</typeparam>
+            <param name="blFunctionToExecute">The business logic function to execute.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.ExecuteBlAsync(System.Func{System.Threading.Tasks.Task{Ark.Result}})">
+            <summary>
+            Execute some business logic asynchronously and returns a consistent HttpResponseDto which own the data to be returned along with some status.
+            </summary>
+            <param name="blFunctionToExecute">The business logic function to execute.</param>
+            <returns>A consistent HttpResponseDto filled with the returned data if any and the status.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.ExecuteBl(System.Func{Ark.Result})">
+            <summary>
+            Execute some business logic and returns a consistent HttpResponseDto which own the data to be returned along with some status.
+            </summary>
+            <param name="blFunctionToExecute">The business logic function to execute.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.ExecuteBlAndReturnFile(System.Func{System.Threading.Tasks.Task{Ark.Result{Ark.Net.Models.FileDto}}},System.Boolean)">
+            <summary>
+            Executes a business logic method that returns a Result{FileDto} and return the file to the user.
+            </summary>
+            <param name="blFunctionToExecute">The business logic method to execute that returns a Result{FileDto}.</param>
+            <param name="displayPdf">Whether this is a PDF file to display.</param>
+            <returns>
+            200 : The file to download/display;
+            404 : The file has not been found;
+            500 : An unexpected error occurs;
+            </returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.CreateResultDtoFromResult(Ark.Result)">
+            <summary>
+            Creates a new ResultDto given a Result.
+            </summary>
+            <param name="result">The result to convert in ResultDto.</param>
+            <returns>The newly created ResultDto.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.CreateResultDtoFromResult``1(Ark.Result{``0})">
+            <summary>
+            Creates a new ResultDto given a Result{TResult}.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="result">The result to convert in ResultDto.</param>
+            <returns>The newly created ResultDto.</returns>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.LogResult(Ark.Result)">
+            <summary>
+            Logs the result if not success using the optional set logger.
+            </summary>
+            <param name="result">The result to log.</param>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase.MapException(System.Exception)">
+            <summary>
+            Maps an Exception to a DTO.
+            </summary>
+            <param name="exception">The exception to map.</param>
+            <returns>The exception DTO mapped.</returns>
+        </member>
+        <member name="T:Ark.AspNetCore.ControllerBase`1">
+            <inheritdoc />
+            <summary>
+            Ce contrôleur doit être hérité par tous les contrôleurs utilisé dans le projet.
+            L'attribut ResponseCache est utilisé pour forcer les navigateurs à ne pas cacher les réponses de l'API (utile pour IE).
+            </summary>
+            <typeparam name="TUserProfileData">The type of the user profile data.</typeparam>
+        </member>
+        <member name="M:Ark.AspNetCore.ControllerBase`1.#ctor(Microsoft.Extensions.Logging.ILogger,System.Boolean)">
+            <summary>
+            Creates a <see cref="T:Ark.AspNetCore.ControllerBase"/> instance.
+            </summary>
+            <param name="logger">The logger used to log the failed request results.</param>
+            <param name="isLoggingOnlyUnexpectedResult">Whether to log only the unexpected result, otherwise log all the result that did not succeed.</param>
+        </member>
+        <member name="F:Ark.AspNetCore.ControllerBase`1._userSession">
+            <summary>
+            Les informations de session utilisateur reprises du contexte HTTP (mise dans le contexte par le mécanisme d'authentification).
+            </summary>
+        </member>
+        <member name="P:Ark.AspNetCore.ControllerBase`1.UserSession">
+            <summary>
+            The user session taken from the HTTP context (set by the user authorization mechanism)./// Les informations de session utilisateur reprises du contexte HTTP (mise dans le contexte par le mécanisme d'authentification).
+            Lazy loaded.
+            </summary>
+        </member>
+    </members>
+</doc>

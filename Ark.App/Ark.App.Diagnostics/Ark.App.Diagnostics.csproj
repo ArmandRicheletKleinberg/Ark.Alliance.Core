@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Armand Richelet-Kleinberg</Authors>
+    <Company>M2H.IO</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Ark project</Description>
+		<Configurations>Debug;Release</Configurations>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Ark.Data\Ark.Data.EFCore.SqlServer\Ark.Data.EFCore.SqlServer.csproj" />
+		<ProjectReference Include="..\..\Ark.Data\Ark.Data\Ark.Data.csproj" />
+	</ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+</Project>

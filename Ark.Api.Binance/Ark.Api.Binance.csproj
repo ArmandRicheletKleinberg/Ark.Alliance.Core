@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Ark.Api.Binance</AssemblyName>
+    <RootNamespace>Ark.Api.Binance</RootNamespace>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <Version>1.0.0</Version>
+    <Authors>Armand Richelet-Kleinberg</Authors>
+    <Company>M2H.IO</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Binance API client wrapper.</Description>
+    <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
+    <DocumentationFile>Ark.Api.Binance.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Binance.Net" Version="11.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Resilience" Version="9.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ark.App\Ark.App.Diagnostics\Ark.App.Diagnostics.csproj" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+</Project>

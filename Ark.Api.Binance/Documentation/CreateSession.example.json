@@ -1,0 +1,35 @@
+{
+  // Binance API configuration used by the CreateSession endpoint.
+  "ApiKey": "YOUR_API_KEY",
+  "ApiSecret": "YOUR_API_SECRET",
+  "BaseUrl": "https://fapi.binance.com",
+  "TestnetBaseUrl": "https://testnet.binancefuture.com",
+  "Services": {
+    // Periodic ticker tracking
+    "TickerFollowup": {
+      "IsEnabled": true,
+      "ScheduledLaps": "0.00:00:01",
+      "ExecuteWhenStart": true,
+      "Data": {
+        // Futures symbols to monitor
+        "Tickers": ["SOLUSDT", "BTCUSDT", "ETHUSDT", "XRPUSDT"],
+        "TickerType": "Futures",
+        "OnlyTradingTickerAvailable": true,
+        "UseWebSocket": false
+      }
+    },
+    // Order tracking service executed every second
+    "OrderFollowup": {
+      "IsEnabled": true,
+      "ScheduledLaps": "0.00:00:01",
+      "ExecuteWhenStart": true
+    },
+    // Position tracking service executed every second
+    "PositionFollowup": {
+      "IsEnabled": true,
+      "ScheduledLaps": "0.00:00:01",
+      "ExecuteWhenStart": true
+    }
+  },
+  "OwnerId": ""
+}

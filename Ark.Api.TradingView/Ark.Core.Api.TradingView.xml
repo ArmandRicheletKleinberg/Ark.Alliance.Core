@@ -1,0 +1,364 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ark.Core.Api.TradingView</name>
+    </assembly>
+    <members>
+        <member name="T:Ark.Core.Api.TradingView.TradingViewController`1">
+            <summary>
+            Controller exposing TradingView client operations.
+            + Thin wrapper over <see cref="T:Ark.Core.Api.TradingView.TradingViewClient"/> to expose HTTP endpoints.
+            - Responses are not cached and depend on TradingView availability.
+            Ref: <see href="https://learn.microsoft.com/aspnet/core/web-api/?view=aspnetcore-9.0"/>
+            </summary>
+            <typeparam name="TUserProfileData">Type of user profile data consumed by the base controller.</typeparam>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewController`1.#ctor(Ark.Core.Api.TradingView.TradingViewClient)">
+            <summary>
+            Initializes a new instance of the controller.
+            + Obtains a <see cref="T:Ark.Core.Api.TradingView.TradingViewClient"/> via dependency injection.
+            - Throws <see cref="T:System.ArgumentNullException"/> if <paramref name="client"/> is <see langword="null"/>.
+            Ref: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"/>
+            </summary>
+            <param name="client">Client used to communicate with TradingView.</param>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewController`1.GetTickers(System.String)">
+            <summary>
+            Searches tickers using the TradingView public API.
+            + Wraps the <see cref="M:Ark.Core.Api.TradingView.TradingViewClient.GetTickersAsync(System.String,System.Threading.CancellationToken,Ark.Core.Api.TradingView.Models.TradingViewCredentials)"/> call.
+            - Limited by TradingView rate limits and public search scope.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529348-symbol-search/"/>
+            </summary>
+            <param name="query">Text to search. Example: <c>BTC</c>.</param>
+            <returns>
+            Matching tickers serialized as JSON.
+            <code lang="json">[{"symbol":"BINANCE:BTCUSDT"}]</code>
+            </returns>
+            <response code="200">Returns a list of tickers.</response>
+            <response code="400">If the query is empty.</response>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewController`1.GetQuote(System.String,System.String,System.String)">
+            <summary>
+            Retrieves a real time quote.
+            + Provides last price and volume for the symbol.
+            - Credentials are optional and use basic authentication.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529354-real-time-data/"/>
+            </summary>
+            <param name="symbol">Ticker symbol like <c>BINANCE:BTCUSDT</c>.</param>
+            <param name="user">Optional username for TradingView.</param>
+            <param name="pass">Optional password for TradingView.</param>
+            <returns>
+            The current quote serialized as JSON.
+            <code lang="json">{"price":42000.0,"volume":0.5}</code>
+            </returns>
+            <response code="200">Returns the real time quote.</response>
+            <response code="400">If the symbol is missing.</response>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewController`1.GetHistory(System.String,System.DateTime,System.DateTime,Ark.Core.Api.TradingView.Models.TradingViewInterval,System.String,System.String)">
+            <summary>
+            Retrieves historical candle data.
+            + Useful for charting and backtesting scenarios.
+            - Large date ranges may be truncated by the upstream service.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529350-history/"/>
+            </summary>
+            <param name="symbol">Ticker symbol.</param>
+            <param name="start">Start date in UTC.</param>
+            <param name="end">End date in UTC.</param>
+            <param name="interval">Candle interval as <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewInterval"/>.</param>
+            <param name="user">Optional username for TradingView.</param>
+            <param name="pass">Optional password for TradingView.</param>
+            <returns>
+            History points serialized as JSON.
+            <code lang="json">{"symbol":"BTCUSDT","points":[{"open":1.0}]}</code>
+            </returns>
+            <response code="200">Returns historical data.</response>
+            <response code="400">If parameters are invalid.</response>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.AnalysisSummary">
+            <summary>
+            Lightweight technical analysis summary from TradingView.
+            + Aggregates multiple indicators into a single recommendation.
+            - Availability depends on TradingView data coverage.
+            Ref: <see href="https://www.tradingview.com/support/"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.AnalysisSummary.Symbol">
+            <summary>Symbol identifier.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.AnalysisSummary.Recommendation">
+            <summary>
+            Recommendation text, e.g. <c>BUY</c>.
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.AnalysisSummary.Timestamp">
+            <summary>Time of the analysis as <see cref="T:System.DateTime"/>.</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.TradingViewInterval">
+            <summary>
+            Represents the candle interval used when retrieving historical data.
+            + Maps to TradingView resolution codes like <c>1</c> or <c>15S</c>.
+            - Not every interval is supported for all symbols.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529350-history/"/>
+            </summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Second15">
+            <summary>Fifteen seconds interval (<c>15S</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Second30">
+            <summary>Thirty seconds interval (<c>30S</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Minute1">
+            <summary>One minute interval (<c>1</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Minute5">
+            <summary>Five minutes interval (<c>5</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Minute15">
+            <summary>Fifteen minutes interval (<c>15</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Hour1">
+            <summary>Hourly interval (<c>60</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Hour4">
+            <summary>Four hours interval (<c>240</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Day1">
+            <summary>Daily interval (<c>D</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Week1">
+            <summary>Weekly interval (<c>W</c>).</summary>
+        </member>
+        <member name="F:Ark.Core.Api.TradingView.Models.TradingViewInterval.Month1">
+            <summary>Monthly interval (<c>M</c>).</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.HistoryPoint">
+            <summary>
+            Represents a single historical data point.
+            + Encapsulates OHLCV information for one interval.
+            - Does not adjust for corporate actions like splits.
+            Ref: <see href="https://www.tradingview.com/support/"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Timestamp">
+            <summary>Unix timestamp of the period as <see cref="T:System.DateTime"/>.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Open">
+            <summary>Open price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.High">
+            <summary>High price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Low">
+            <summary>Low price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Close">
+            <summary>Close price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Volume">
+            <summary>Trading volume.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.HistoryPoint.OrderCount">
+            <summary>Number of orders traded during the period.</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.Quote">
+            <summary>
+            Represents a real time quote value from TradingView.
+            + Captures last traded price, volume and metadata.
+            - Lacks order book depth and trade history details.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529354-real-time-data/"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Price">
+            <summary>Last traded price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Volume">
+            <summary>Trading volume for the current period.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Timestamp">
+            <summary>Timestamp of the quote as <see cref="T:System.DateTime"/>.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Currency">
+            <summary>Currency of the quote price.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Exchange">
+            <summary>Exchange or trading platform.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Source">
+            <summary>Data source identifier.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.Underlying">
+            <summary>Underlying symbol if applicable.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.Quote.IsFutures">
+            <summary>Indicates if the data is for a futures contract.</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.QuoteHistory">
+            <summary>
+            Represents a collection of historical data points.
+            + Suitable for chart rendering and analysis.
+            - Volume and order counts may be zero when unavailable.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529350-history/"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.Symbol">
+            <summary>
+            Symbol of the history.
+            + Example: <c>BTCUSDT</c>.
+            - Case sensitive according to source exchange.
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.Interval">
+            <summary>Candle interval as <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewInterval"/>.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.Source">
+            <summary>Data source identifier.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.Underlying">
+            <summary>Underlying symbol if applicable.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.IsFutures">
+            <summary>Indicates if the data is for a futures contract.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.QuoteHistory.Points">
+            <summary>
+            Historical points of type <see cref="T:Ark.Core.Api.TradingView.Models.HistoryPoint"/>.
+            + Ordered chronologically by <see cref="P:Ark.Core.Api.TradingView.Models.HistoryPoint.Timestamp"/>.
+            - May be empty when no data is available for the period.
+            </summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.TickerInfo">
+            <summary>
+            Describes a ticker symbol returned by TradingView.
+            + Includes exchange and currency metadata for integration.
+            - Not all fields are guaranteed to be populated by the upstream service.
+            Ref: <see href="https://www.tradingview.com/support/"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TickerInfo.Symbol">
+            <summary>Symbol identifier (e.g. BINANCE:BTCUSDT).</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TickerInfo.Name">
+            <summary>Display name.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TickerInfo.Exchange">
+            <summary>Exchange or platform.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TickerInfo.Currency">
+            <summary>Currency of the quote.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TickerInfo.Isin">
+            <summary>International security identification number if available.</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.Models.TradingViewCredentials">
+            <summary>
+            Optional credentials used when calling TradingView endpoints.
+            + Enables access to authenticated features when supported.
+            - Uses basic authentication which sends credentials in plain text over TLS.
+            Ref: <see href="https://developer.mozilla.org/docs/Web/HTTP/Authentication#basic_authentication_scheme"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TradingViewCredentials.Username">
+            <summary>Username for basic authentication.</summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.Models.TradingViewCredentials.Password">
+            <summary>Password for basic authentication.</summary>
+        </member>
+        <member name="T:Ark.Core.Api.TradingView.TradingViewClient">
+            <summary>
+            Provides access to a subset of TradingView public APIs.
+            + Wraps <see cref="T:System.Net.Http.HttpClient"/> calls with standardized <see cref="T:Ark.Result`1"/> responses.
+            - Covers only public, undocumented endpoints that may change without notice.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient"/>
+            </summary>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewClient.#ctor(System.Net.Http.HttpClient,Microsoft.Extensions.Logging.ILogger{Ark.Core.Api.TradingView.TradingViewClient})">
+            <summary>
+            Initializes a new instance of <see cref="T:Ark.Core.Api.TradingView.TradingViewClient"/>.
+            + Configures JSON serialization and attaches the provided <see cref="T:System.Net.Http.HttpClient"/>.
+            - Throws <see cref="T:System.ArgumentNullException"/> if <paramref name="client"/> is <see langword="null"/>.
+            Ref: <see href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient"/>
+            </summary>
+            <param name="client">HTTP client used to perform requests.</param>
+            <param name="logger">Optional logger for diagnostics.</param>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.TradingViewClient.Logger">
+            <summary>
+            Gets or sets the logger instance.
+            + Enables diagnostic logging of HTTP requests.
+            - May be <see langword="null"/> when logging is not configured.
+            Ref: <see href="https://learn.microsoft.com/dotnet/core/extensions/logging"/>
+            </summary>
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.TradingViewClient.RootUrl">
+            <inheritdoc />
+        </member>
+        <member name="P:Ark.Core.Api.TradingView.TradingViewClient.UseDefaultCredentials">
+            <inheritdoc />
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewClient.GetTickersAsync(System.String,System.Threading.CancellationToken,Ark.Core.Api.TradingView.Models.TradingViewCredentials)">
+            <summary>
+            Searches tickers by text query.
+            + Calls TradingView symbol search endpoint.
+            - Results are limited to publicly available symbols.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529348-symbol-search/"/>
+            </summary>
+            <param name="query">Text to search.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <param name="credentials">Optional <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewCredentials"/> sent via basic authentication.</param>
+            <returns>
+            A list of matching <see cref="T:Ark.Core.Api.TradingView.Models.TickerInfo"/> objects.
+            <code lang="json">[{"symbol":"BINANCE:BTCUSDT"}]</code>
+            </returns>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewClient.GetRealTimeQuoteAsync(System.String,System.Threading.CancellationToken,Ark.Core.Api.TradingView.Models.TradingViewCredentials)">
+            <summary>
+            Retrieves a real time quote for a given symbol.
+            + Uses TradingView's quote gateway to fetch last price data.
+            - Requires valid symbol and may be delayed for free users.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529354-real-time-data/"/>
+            </summary>
+            <param name="symbol">Ticker symbol like BINANCE:BTCUSDT.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <param name="credentials">Optional <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewCredentials"/> sent via basic authentication.</param>
+            <returns>
+            The current <see cref="T:Ark.Core.Api.TradingView.Models.Quote"/> with price and volume.
+            <code lang="json">{"price":42000.0,"volume":0.5}</code>
+            </returns>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewClient.GetHistoryAsync(System.String,System.DateTime,System.DateTime,Ark.Core.Api.TradingView.Models.TradingViewInterval,System.Threading.CancellationToken,Ark.Core.Api.TradingView.Models.TradingViewCredentials)">
+            <summary>
+            Retrieves historical candle data.
+            + Provides OHLCV points for charting and analysis.
+            - Large ranges may be limited by the service.
+            Ref: <see href="https://www.tradingview.com/support/solutions/43000529350-history/"/>
+            </summary>
+            <param name="symbol">Ticker symbol.</param>
+            <param name="start">Start date (UTC).</param>
+            <param name="end">End date (UTC).</param>
+            <param name="interval">Candle interval as <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewInterval"/>.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <param name="credentials">Optional <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewCredentials"/> sent via basic authentication.</param>
+            <returns>
+            Historical price and volume data as <see cref="T:Ark.Core.Api.TradingView.Models.QuoteHistory"/>.
+            <code lang="json">{"symbol":"BTCUSDT","points":[{"open":1.0}]}</code>
+            </returns>
+        </member>
+        <member name="M:Ark.Core.Api.TradingView.TradingViewClient.GetAnalysisSummaryAsync(System.String,System.Threading.CancellationToken,Ark.Core.Api.TradingView.Models.TradingViewCredentials)">
+            <summary>
+            Retrieves a short technical analysis summary for the given symbol.
+            + Calls TradingView's scanner API to obtain a consolidated recommendation.
+            - Uses an undocumented endpoint that may change without notice.
+            Ref: <see href="https://www.tradingview.com/support/"/>
+            </summary>
+            <param name="symbol">Ticker symbol.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <param name="credentials">Optional <see cref="T:Ark.Core.Api.TradingView.Models.TradingViewCredentials"/> sent via basic authentication.</param>
+            <returns>A <see cref="T:Ark.Result`1"/> containing the recommendation or a failure reason.</returns>
+            <remarks>
+            The mapping of numeric scores to <see cref="P:Ark.Core.Api.TradingView.Models.AnalysisSummary.Recommendation"/> values is based on
+            public TradingView behaviour and may need adjustments if the service changes. The endpoint does not
+            provide a timestamp, therefore <see cref="P:System.DateTime.UtcNow"/> is used.
+            </remarks>
+        </member>
+    </members>
+</doc>

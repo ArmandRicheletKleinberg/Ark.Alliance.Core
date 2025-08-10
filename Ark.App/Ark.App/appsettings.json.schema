@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "$id": "http://Ark.org/app.settings",
+  "definitions": {
+    "Services": {
+      "description": "The settings managing the hosted services that runs in background of the .NET Core application",
+      "type": "object",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^.": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "IsEnabled": {
+                  "description": "Whether the service should be executed or not, default to true",
+                  "type": "boolean",
+                  "default": true
+                },
+                "ScheduledStartLocalTime": {
+                  "description": "The local time when the service should start for scheduled services",
+                  "type": "string",
+                  "pattern": "(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "00:00:00"
+                },
+                "ScheduledStartUtcTime": {
+                  "description": "The UTC time when the service should start for scheduled services",
+                  "type": "string",
+                  "pattern": "(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "00:00:00"
+                },
+                "ScheduledLaps": {
+                  "description": "The laps of time to wait between 2 calls of a scheduled service",
+                  "type": "string",
+                  "pattern": "(\\d+)\\.(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "0.00:00:00"
+                },
+                "ExecuteWhenStart": {
+                  "description":
+                    "Whether to execute this service as soon as the application starts regardless of the scheduling",
+                  "type": "boolean",
+                  "default": false
+                },
+                "Data": {
+                  "description": "Any custom data used by this service",
+                  "type": "object"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+
+
+    /*
+     * LOGGING
+     * The settings to setup the application logs (compatible with .NET Core logging system)
+     */
+    "Logging": {
+      "description": "The settings to setup the application logs (compatible with .NET Core logging system)",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "IncludeScopes": {
+          "description": "Whether the scope should be inserted to the logs for the output (global for all log outputs)",
+          "type": "boolean"
+        },
+        "LogLevel": {
+          "description":
+            "Depending on the log category, the level from which the log should be really sent to the output (global for all log outputs)",
+          "type": "object",
+          "patternProperties": {
+            "^.": {
+              "allOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "Trace",
+                    "Debug",
+                    "Information",
+                    "Warning",
+                    "Error",
+                    "Critical",
+                    "None"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "Debug": {
+          "description": "Log to the Debug Console in Visual Studio",
+          "$ref": "#/definitions/Logging/definitions/logger"
+        },
+        "Console": {
+          "description": "Log to the output Console of the .NET Core application",
+          "$ref": "#/definitions/Logging/definitions/logger"
+        },
+        "EventLog": {
+          "description": "Log to the Windows event log",
+          "$ref": "#/definitions/Logging/definitions/logger"
+        },
+        "File": {
+          "description": "Log to a file",
+          "$ref": "#/definitions/Logging/definitions/logger"
+        },
+        "SqlServer": {
+          "description": "Log to a SQL Server database",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Logging/definitions/logger"
+            }
+          ],
+          "properties": {
+            "Database": {
+              "description":
+                "The name/key of a database setup in the Databases configuration of this settings file (replace the connection string)",
+              "type": "string",
+              "default": true
+            },
+            "SqlServerConnectionString": {
+              "description": "The SQL Server connection string used to connect the server",
+              "type": "string",
+              "default": "_logs"
+            },
+            "SqlServerTableName": {
+              "description": "The name of the table to create in the database to insert the logs into",
+              "type": "string",
+              "default": "_logs"
+            }
+          }
+        }
+      },
+      "definitions": {
+        "logger": {
+          "type": "object",
+          "properties": {
+            "IsEnabled": {
+              "description": "Whether to log to this output, does nothing if not enabled",
+              "type": "boolean",
+              "default": true
+            },
+            "IncludeScopes": {
+              "description": "Whether the scope should be inserted to the logs for this output (override the global)",
+              "type": "boolean"
+            },
+            "LogLevel": {
+              "description":
+                "Depending on the log category, the level from which the log should be really sent to the output (override the global)",
+              "type": "object",
+              "patternProperties": {
+                "^.": {
+                  "allOf": [
+                    {
+                      "type": "string",
+                      "enum": ["Trace", "Debug", "Information", "Warning", "Error", "Critical", "None"]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

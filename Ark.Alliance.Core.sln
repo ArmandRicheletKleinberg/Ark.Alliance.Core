@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ark", "Ark\Ark.csproj", "{54C22515-D831-7302-978C-51DAD15FF814}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54C22515-D831-7302-978C-51DAD15FF814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54C22515-D831-7302-978C-51DAD15FF814}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54C22515-D831-7302-978C-51DAD15FF814}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54C22515-D831-7302-978C-51DAD15FF814}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {62955FF2-0619-4F26-9869-3DF8BA5E1E3E}
+	EndGlobalSection
+EndGlobal

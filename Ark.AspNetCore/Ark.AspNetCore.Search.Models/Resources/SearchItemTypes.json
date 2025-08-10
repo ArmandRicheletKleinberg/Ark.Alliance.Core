@@ -1,0 +1,18 @@
+[
+  { "code": "ORDER", "label": { "en": "Order", "fr": "Commande" } },
+  { "code": "CUSTOMER", "label": { "en": "Customer", "fr": "Client" } },
+  { "code": "SUPPLIER", "label": { "en": "Supplier", "fr": "Fournisseur" } },
+  { "code": "USER", "label": { "en": "User", "fr": "Utilisateur" } },
+  { "code": "PROJECT", "label": { "en": "Project", "fr": "Projet" } },
+  { "code": "SERVICE_INSURANCE", "label": { "en": "Insurance Service", "fr": "Service d'assurance" } },
+  { "code": "SERVICE_CONTROL", "label": { "en": "Control Service", "fr": "Service de contrôle" } },
+  { "code": "SERVICE_AUDIT", "label": { "en": "Audit Service", "fr": "Service d'audit" } },
+  { "code": "SERVICE_ACCOUNTING", "label": { "en": "Accounting Service", "fr": "Service de comptabilité" } },
+  { "code": "SERVICE_TRANSPORT", "label": { "en": "Transport Service", "fr": "Service de transport" } },
+  { "code": "CONTACT", "label": { "en": "Contact", "fr": "Contact" } },
+  { "code": "SOFTWARE", "label": { "en": "Software", "fr": "Logiciel" } },
+  { "code": "MATERIAL", "label": { "en": "Material", "fr": "Matériel" } },
+  { "code": "FURNITURE", "label": { "en": "Furniture", "fr": "Mobilier" } },
+  { "code": "GOODS", "label": { "en": "Goods", "fr": "Marchandises" } },
+  { "code": "ITEM", "label": { "en": "Item", "fr": "Article" } }
+]

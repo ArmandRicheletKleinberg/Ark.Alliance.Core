@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "$id": "http://ldsi.eu/app.settings",
+  "additionalProperties": true,
+  "type": "object",
+  "properties": {
+    /*
+     * CROSSCUTTINGSERVICES
+     * The settings needed to connect properly to the CrossCutting services
+     */
+    "CrossCuttingServices": {
+      "description": "The settings needed to connect properly to the CrossCutting services",
+      "type": "object",
+      "properties": {
+        "Url": {
+          "description": "The URL of the CrossCutting services to connect",
+          "type": "string",
+          "default": ""
+        },
+        "ApplicationId": {
+          "description": "The identifier of the application for the CrossCutting services. ie. Hub",
+          "type": "string"
+        }
+      }
+    },
+    /*
+     * AUTHORIZATION
+     * The way to authorize users to access the application ressources
+     */
+    "Authorization": {
+      "description": "The way to authorize users to access the application ressources",
+      "type": "object",
+      "properties": {
+        "Type": {
+          "description": "The type of authorization to check",
+          "type": "string",
+          "enum": [
+            "CrossCutting"
+          ],
+          "default": "CrossCutting"
+        },
+        "UserSessionTimeout": {
+          "description": "The duration of the user session. After this timeout, a new user authorization check is done",
+          "type": "string",
+          "default": "0.00:30:00"
+        },
+        "Applications": {
+          "description": "The applications allowed to access some resources protected with AuthorizeApplication attribute",
+          "type": "object",
+          "additionalProperties": {
+              "description": "The application name along with the Windows account identities allowed for this application (separated by semi-colon ; ).",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    /*
+     * DATABASES
+     * The settings of the database to connect for the application
+     */
+    "Databases": {
+      "description": "The settings of the database to connect for the application",
+      "type": "object",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^.": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ConnectionString": {
+                  "description": "The connection string used to connect the database",
+                  "type": "string"
+                },
+                "MigrationScriptsPath": {
+                  "description": "The folder relative path name into which lookup the migration scripts",
+                  "type": "string",
+                  "default": "_DbEvolve"
+                }
+              },
+              "required": [
+                "ConnectionString"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    /*
+     * SERVICES
+     * The settings managing the hosted services that runs in background of the .NET Core application
+     */
+    "Services": {
+      "description": "The settings managing the hosted services that runs in background of the .NET Core application",
+      "type": "object",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^.": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "IsEnabled": {
+                  "description": "Whether the service should be executed or not, default to true",
+                  "type": "boolean",
+                  "default": true
+                },
+                "ScheduledStartLocalTime": {
+                  "description": "The local time when the service should start for scheduled services",
+                  "type": "string",
+                  "pattern": "(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "00:00:00"
+                },
+                "ScheduledStartUtcTime": {
+                  "description": "The UTC time when the service should start for scheduled services",
+                  "type": "string",
+                  "pattern": "(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "00:00:00"
+                },
+                "ScheduledLaps": {
+                  "description": "The laps of time to wait between 2 calls of a scheduled service",
+                  "type": "string",
+                  "pattern": "(\\d+)\\.(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                  "default": "0.00:00:00"
+                },
+                "ExecuteWhenStart": {
+                  "description": "Whether to execute this service as soon as the application starts regardless of the scheduling",
+                  "type": "boolean",
+                  "default": false
+                },
+                "Data": {
+                  "description": "Any custom data used by this service",
+                  "type": "object"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    /*
+     * MQSERIESCONNECTIONPOOLS
+     * The settings used to setup the connection pools used for the MQ Series communication
+     */
+    "MQSeriesConnectionPools": {
+      "description": "The settings used to setup the connection pools used for the MQ Series communication",
+      "type": "object",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^.": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "HostName": {
+                  "description": "The URL of the MQ Series server host",
+                  "type": "string"
+                },
+                "HostPort": {
+                  "description": "The port used to connect the MQ Series server host",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535,
+                  "default": 1414
+                },
+                "QueueManagerName": {
+                  "description": "The name of the queue manager",
+                  "type": "string"
+                },
+                "ChannelName": {
+                  "description": "The name of the channel to connect on the manager",
+                  "type": "string"
+                },
+                "Queues": {
+                  "description": "The name of the queues to use with the queue application key as the property name and the queue name on the channel as the value",
+                  "type": "object",
+                  "patternProperties": {
+                    "^.": {
+                      "allOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "MaxSimultaneousConnections": {
+                  "description": "The maximum number of simultaneous connection. It should use less than this number but never use more",
+                  "type": "integer"
+                },
+                "ConnectionAutoCloseDelay": {
+                  "description": "The delay in ms to wait before auto closing a no-more-used active connection in order to reduce the connections used. 0 for closing at each request. Be aware that Re open a connection takes some time (200ms) so 0 may not be used for frequently used connection",
+                  "type": "integer",
+                  "default": 0
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    /*
+     * LOGGING
+     * The settings to setup the application logs (compatible with .NET Core logging system)
+     */
+    "Logging": {
+      "description": "The settings to setup the application logs (compatible with .NET Core logging system)",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "IncludeScopes": {
+          "description": "Whether the scope should be inserted to the logs for the output (global for all log outputs)",
+          "type": "boolean"
+        },
+        "LogLevel": {
+          "description": "Depending on the log category, the level from which the log should be really sent to the output (global for all log outputs)",
+          "type": "object",
+          "patternProperties": {
+            "^.": {
+              "allOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "Trace",
+                    "Debug",
+                    "Information",
+                    "Warning",
+                    "Error",
+                    "Critical",
+                    "None"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "Debug": {
+          "description": "Log to the Debug Console in Visual Studio",
+          "$ref": "#/properties/Logging/definitions/logger"
+        },
+        "Console": {
+          "description": "Log to the output Console of the .NET Core application",
+          "$ref": "#/properties/Logging/definitions/logger"
+        },
+        "EventLog": {
+          "description": "Log to the Windows event log",
+          "$ref": "#/properties/Logging/definitions/logger"
+        },
+        "File": {
+          "description": "Log to a file",
+          "$ref": "#/properties/Logging/definitions/logger"
+        },
+        "SqlServer": {
+          "description": "Log to a SQL Server database",
+          "allOf": [
+            {
+              "$ref": "#/properties/Logging/definitions/logger"
+            }
+          ],
+          "properties": {
+            "Database": {
+              "description": "The name/key of a database setup in the Databases configuration of this settings file (replace the connection string)",
+              "type": "string",
+              "default": true
+            },
+            "SqlServerConnectionString": {
+              "description": "The SQL Server connection string used to connect the server",
+              "type": "string",
+              "default": "_logs"
+            },
+            "SqlServerTableName": {
+              "description": "The name of the table to create in the database to insert the logs into",
+              "type": "string",
+              "default": "_logs"
+            }
+          }
+        }
+      },
+      "definitions": {
+        "logger": {
+          "type": "object",
+          "properties": {
+            "IsEnabled": {
+              "description": "Whether to log to this output, does nothing if not enabled",
+              "type": "boolean",
+              "default": true
+            },
+            "IncludeScopes": {
+              "description": "Whether the scope should be inserted to the logs for this output (override the global)",
+              "type": "boolean"
+            },
+            "LogLevel": {
+              "description": "Depending on the log category, the level from which the log should be really sent to the output (override the global)",
+              "type": "object",
+              "patternProperties": {
+                "^.": {
+                  "allOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "Trace",
+                        "Debug",
+                        "Information",
+                        "Warning",
+                        "Error",
+                        "Critical",
+                        "None"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

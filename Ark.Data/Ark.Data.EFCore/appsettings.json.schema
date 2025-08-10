@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "$id": "http://Ark.org/app.settings",
+  "definitions": {
+    "Databases": {
+      "description": "The database settings used to manage the database connection.",
+      "type": "object",
+      "additionalProperties": true,
+      "patternProperties": {
+        "^.": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ConnectionString": {
+                  "description": "The connection string used to connect the database.",
+                  "type": "string"
+                },
+                "CommandTimeout": {
+                  "description": "The maximum time in seconds that has a database command to execute. Default to null which is not timeout.",
+                  "type": "integer"
+                },
+                "Migrate": {
+                  "description": "Whether this database should be migrated or not. Default to false.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "MigrationsAssembly": {
+                  "description": "The simple name of the assembly where to search for the migrations script. Default to the DbContextEx instance assembly.",
+                  "type": "string"
+                },
+                "MigrationsHistoryTable": {
+                  "description": "The name of the table used for migrations history. Default to \"__EFMigrationsHistory\".",
+                  "type": "string",
+                  "default": "__EFMigrationsHistory"
+                },
+                "UseSettingsTable": {
+                  "description": "Whether to use the built-in single key-value table Settings. Default to false.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "SettingsTableName": {
+                  "description": "The settings built-in single key-value table name. Default to \"Settings\".",
+                  "type": "string",
+                  "default": "Settings"
+                },
+                "GlobalDateTimeGlobalKind": {
+                  "description": "The way the date will be stored in the database, either in local time or in UTC. Default to UTC.",
+                  "type": "string",
+                  "enum": [ "Utc", "Local" ],
+                  "default" :  "Utc" 
+                }
+              },
+              "required": [ "ConnectionString" ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
