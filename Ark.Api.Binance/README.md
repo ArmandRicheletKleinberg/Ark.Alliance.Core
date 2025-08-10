@@ -148,13 +148,13 @@ For integrity, please cite all sources and licenses in your projects. This READM
 
 Armand Richelet-Kleinberg
 
-## Codex Prompts
+##  Prompts
 ```
 Review this README and the solution README before modifying the Binance API wrapper.
 Run `dotnet format`, `dotnet build` and `dotnet test` after changes and report any failures.
 ```
 
-### Codex Negative Prompt
+###  Negative Prompt
 ```
 Do not invent Binance endpoints or alter trading logic.
 Never commit credentials or generated artifacts and keep TODO comments until resolved.

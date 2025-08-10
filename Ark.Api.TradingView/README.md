@@ -27,13 +27,13 @@ var client = new TradingViewClient();
 var symbols = await client.SearchAsync("BTCUSDT");
 ```
 
-## Codex Prompts
+##  Prompts
 ```
 Review this README and the solution README before modifying the TradingView client library.
 Run `dotnet format`, `dotnet build` and `dotnet test` after changes and report any failures.
 ```
 
-### Codex Negative Prompt
+###  Negative Prompt
 ```
 Do not invent TradingView endpoints or alter client behaviour beyond documented features.
 Avoid committing generated artifacts or credentials and keep TODO comments until resolved.
