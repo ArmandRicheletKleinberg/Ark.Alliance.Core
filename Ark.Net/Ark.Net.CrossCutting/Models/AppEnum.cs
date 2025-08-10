@@ -12,25 +12,14 @@ namespace Ark.Net.CrossCutting.Models
         /// <summary>
         /// Application ArkArchive.
         /// </summary>
-        ArkArchive,
+        ArkAlliance,
 
         /// <summary>
         /// ArkAllianceHub.
         /// </summary>
         ArkAllianceHub,
 
-        /// <summary>
-        /// Application LogicalTables
-        /// </summary>
-        LogicalTables,
-
-
-        /// <summary>
-        /// Application  ArkAlliance.
-        /// </summary>
-        ArkAlliance,
-
-
+        
         /// <summary>
         /// Application  ArkAlliance.
         /// </summary>
@@ -38,9 +27,9 @@ namespace Ark.Net.CrossCutting.Models
 
 
         /// <summary>
-        /// Application   ArkPortal,.
+        /// Application Personnal Agent,.
         /// </summary>
-        ArkPortal,
+        MyAlliance,
 
         /// <summary>
         /// Application ArkWorldx.
@@ -48,29 +37,19 @@ namespace Ark.Net.CrossCutting.Models
         ArkWorld,
 
         /// <summary>
-        /// Application table logique.
+        /// Application communications.
         /// </summary>
-        TablesLogiques,
+        ArkAllianceChat,
+
 
         /// <summary>
-        /// Application ArkReporting.
+        /// Application Authentificaton.
         /// </summary>
-        ArkReporting,
+        ArkAllianceIdChain,
 
-        /// <summary>
-        ///  ArkAiAgent .
-        /// </summary>
-        ArkAiAgent,
+   
 
-        /// <summary>
-        /// Application ArkReporting.
-        /// </summary>
-        ArkCrossCutting,
 
-        /// <summary>
-        /// Application ArkReporting.
-        /// </summary>
-        CrossCutting,
     }
 }
 
