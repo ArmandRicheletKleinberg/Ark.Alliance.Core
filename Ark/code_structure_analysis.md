@@ -456,13 +456,13 @@ For integrity, cite the sources and licenses in your own project. This README wa
 
 **Author**: Armand Richelet-Kleinberg
 
-## Codex Prompts
+##  Prompts
 ```
 Review this README and the solution README before modifying the Ark core library.
 Run `dotnet format`, `dotnet build` and `dotnet test` after changes and report any failures.
 ```
 
-### Codex Negative Prompt
+###  Negative Prompt
 ```
 Do not introduce breaking changes or new dependencies without explicit instruction.
 Never commit secrets or generated artifacts and keep TODO comments until resolved.
