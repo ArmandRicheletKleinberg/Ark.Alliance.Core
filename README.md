@@ -24,11 +24,11 @@ Ark Alliance Core hosts a suite of reusable .NET 9 libraries that follow Domainâ
 | Ark.AspNetCore.Search | Search helpers for ASP.NET Core endpoints. | *(pending)* |
 | Ark.AspNetCore.Search.Models | Embedded search item type dataset. | [README](Ark.AspNetCore/Ark.AspNetCore.Search.Models/README.md) |
 | Ark.System.Info | Cross-platform system, network and storage inspection utilities. | [README](Ark.System/Ark.Core.Systeminfo/README.md) |
-| Ark.Mq.Emqx5 | MQTT (EMQX 5) messaging helpers. | [README](Ark.Mq/Ark.Mq.Emqx5/README.md) |
-| Ark.Mq.RabbitMq | RabbitMQ messaging helpers with resilience and diagnostics. | [README](Ark.Mq/Ark.Mq.RabbitMq/README.md) |
-| Ark.Mq.RocketMq | RocketMQ messaging helpers. | [README](Ark.Mq/Ark.Mq.RocketMq/README.md) |
-| Ark.Mq.MqSeries | IBM MQSeries messaging helpers. | *(pending)* |
-| Ark.Mq.ZeroMq | ZeroMQ messaging helpers. | [README](Ark.Mq/Ark.Mq.ZeroMq/README.md) |
+| Ark.Mq.Emqx5 | MQTT (EMQX 5) messaging helpers. | [README](Ark.Mq/README.md) |
+| Ark.Mq.RabbitMq | RabbitMQ messaging helpers with resilience and diagnostics. | [README](Ark.Mq/README.md)  |
+| Ark.Mq.RocketMq | RocketMQ messaging helpers. | [README](Ark.Mq/README.md) |
+| Ark.Mq.MqSeries | IBM MQSeries messaging helpers. | [README](Ark.Mq/README.md)  |
+| Ark.Mq.ZeroMq | ZeroMQ messaging helpers. | [README](Ark.Mq/README.md)  |
 
 ## Highlights
 
