@@ -9,6 +9,21 @@ namespace Ark.App.Secrets.Providers
     /// </summary>
     public static class ProviderProfiles
     {
+        #region Fields
+        #endregion
+
+        #region Ctors
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Private Methods
+        #endregion
+
         /// <summary>Bloomberg: API key/secret + endpoint per service.</summary>
         public static readonly (string Service, string[] Names)[] Bloomberg = new[]
         {

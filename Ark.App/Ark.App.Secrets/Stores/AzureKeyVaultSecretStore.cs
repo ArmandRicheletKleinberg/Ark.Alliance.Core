@@ -4,19 +4,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using Ark;
 
 namespace Ark.App.Secrets.Stores
 {
     /// <summary>
     /// Azure Key Vault backed secret store.
     /// </summary>
-    public sealed class AzureKeyVaultSecretStore : ISecretStore
+    public sealed class AzureKeyVaultSecretStore : SecretStoreBase
     {
+        #region Fields
         private readonly SecretClient _client;
+        #endregion
+
+        #region Ctors
 
         /// <summary>
-        /// Initializes a store with the given Key Vault URI.
+        /// Initializes a store with the given Key Vault URI using DefaultAzureCredential.
         /// </summary>
         /// <param name="vaultUri">The URI of the Azure Key Vault.</param>
         public AzureKeyVaultSecretStore(Uri vaultUri)
@@ -24,26 +27,38 @@ namespace Ark.App.Secrets.Stores
             _client = new SecretClient(vaultUri, new DefaultAzureCredential());
         }
 
+        /// <summary>
+        /// Initializes a store with a custom SecretClient (preferred for DI).
+        /// </summary>
+        public AzureKeyVaultSecretStore(SecretClient client)
+        {
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+        }
+
+        #endregion
+
+        #region Public Overrides
+
         /// <inheritdoc />
-        public async Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
+        public override async Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
         {
             try
             {
                 var resp = await _client.GetSecretAsync(canonicalName, cancellationToken: ct).ConfigureAwait(false);
-                return Result.Success<string?>(resp.Value.Value);
+                return new Result<string?>(resp.Value.Value);
             }
             catch (Azure.RequestFailedException ex) when (ex.Status == 404)
             {
-                return Result.Success<string?>(null);
+                return new Result<string?>().WithException(ex);
             }
             catch (Exception ex)
             {
-                return Result.Failure<string?>(ex.Message);
+                return new Result<string?>().WithException(ex);
             }
         }
 
         /// <inheritdoc />
-        public async Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
+        public override async Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
         {
             try
             {
@@ -57,7 +72,7 @@ namespace Ark.App.Secrets.Stores
         }
 
         /// <inheritdoc />
-        public async Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
+        public override async Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
         {
             try
             {
@@ -76,11 +91,12 @@ namespace Ark.App.Secrets.Stores
         }
 
         /// <inheritdoc />
-        public Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
+        public override Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
         {
-            // Azure Key Vault does not support server-side prefix listing by name.
-            // Consider tagging secrets at creation time and filtering by tag here.
-            return Task.FromResult(Result.Success((IReadOnlyDictionary<string, string>)new Dictionary<string, string>()));
+            // Azure Key Vault does not support server-side name prefix filtering. Return empty set.
+            return Task.FromResult(new Result<IReadOnlyDictionary<string, string>>(new Dictionary<string, string>()));
         }
+
+        #endregion
     }
 }

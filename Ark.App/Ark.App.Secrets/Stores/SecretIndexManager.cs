@@ -15,6 +15,21 @@ namespace Ark.App.Secrets.Stores
     /// </summary>
     public sealed class SecretIndexManager
     {
+        #region Fields
+        #endregion
+
+        #region Ctors
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Private Methods
+        #endregion
+
         private readonly ISecretStore _store;
         private readonly ILogger? _logger;
 
@@ -142,11 +157,13 @@ namespace Ark.App.Secrets.Stores
         {
             try
             {
+
+            
                 var indexKey = BuildIndexKey(canonicalFolderPrefix);
                 var existing = await _store.GetSecretAsync(indexKey, ct).ConfigureAwait(false);
-                  if (!existing.IsSuccess) return Result.Failure<IReadOnlyDictionary<string, string>>(existing.Reason);
+                  if (!existing.IsSuccess) new Result<IReadOnlyDictionary<string, string>>().WithStatus(ResultStatus.Failure).WithReason(existing.Reason);
                   if (string.IsNullOrWhiteSpace(existing.Data))
-                      return Result.Success((IReadOnlyDictionary<string, string>)new Dictionary<string, string>());
+                    return new Result<IReadOnlyDictionary<string, string>>(new Dictionary<string, string>()).WithReason("Secret Empty");
 
                 string[]? names = null;
                 try
@@ -160,7 +177,7 @@ namespace Ark.App.Secrets.Stores
 
                 var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 if (names is null || names.Length == 0)
-                    return Result.Success((IReadOnlyDictionary<string, string>)dict);
+                    return new Result<IReadOnlyDictionary<string, string>>(dict);
 
                 foreach (var name in names)
                 {
@@ -168,11 +185,11 @@ namespace Ark.App.Secrets.Stores
                       if (v.IsSuccess && v.Data is not null)
                           dict[name] = v.Data;
                 }
-                return Result.Success((IReadOnlyDictionary<string, string>)dict);
+                return new Result<IReadOnlyDictionary<string, string>>(dict);
             }
             catch (Exception ex)
             {
-                return Result.Failure<IReadOnlyDictionary<string, string>>(ex.Message);
+                return new Result<IReadOnlyDictionary<string, string>>().WithReason(ex.Message).WithException(ex);
             }
         }
     }

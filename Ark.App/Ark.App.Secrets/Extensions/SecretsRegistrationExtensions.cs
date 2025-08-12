@@ -1,87 +1,70 @@
 using System;
-using Ark.App.Secrets;
+using System.Collections.Generic;
 using Ark.App.Secrets.Stores;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Amazon.Extensions.NETCore.Setup;
+using Amazon.SecretsManager;
 
 namespace Ark.App.Secrets.Extensions
 {
     /// <summary>
-    /// Dependency injection extensions to wire secret stores and the manager.
+    /// Provides dependency injection helpers to wire secret stores and the manager.
+    /// + Registers each supported provider and a composite router.
+    /// - Does not configure any external store credentials automatically.
     /// </summary>
     public static class SecretsRegistrationExtensions
     {
+        #region Methods
         /// <summary>
-        /// Registers a secret store based on configuration and exposes <see cref="SecretsManager"/>.
+        /// Registers provider stores, the composite router and the <see cref="SecretsManager"/>.
+        /// + Simplifies consumer configuration by bundling default providers.
+        /// - Throws when required configuration sections are missing.
         /// </summary>
-        /// <param name="services">Service collection.</param>
-        /// <param name="configuration">Application configuration.</param>
-        /// <returns>The same service collection for chaining.</returns>
-        /// <remarks>
-        /// Configuration examples:
-        /// <code>
-        /// "Secrets:Store": "AzureKeyVault",
-        /// "Secrets:Azure:VaultUrl": "https://mykv.vault.azure.net/"
-        /// // or
-        /// "Secrets:Store": "AwsSecretsManager"
-        /// // or
-        /// "Secrets:Store": "GoogleSecretManager",
-        /// "Secrets:Google:ProjectId": "my-project"
-        /// // or
-        /// "Secrets:Store": "Environment"
-        /// </code>
-        /// </remarks>
-        public static IServiceCollection AddArkSecretsCore(this IServiceCollection services, IConfiguration configuration)
+        /// <param name="services">Service collection to populate.</param>
+        /// <param name="configuration">Configuration source for provider options.</param>
+        /// <returns>The modified service collection.</returns>
+        public static IServiceCollection AddArkSecrets(this IServiceCollection services, IConfiguration configuration)
         {
-            var storeType = configuration["Secrets:Store"] ?? "Environment";
+            if (services is null) throw new ArgumentNullException(nameof(services));
+            if (configuration is null) throw new ArgumentNullException(nameof(configuration));
 
-            switch (storeType)
+            // AWS client (optional if you don't use AWS)
+            services.AddDefaultAWSOptions(configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonSecretsManager>();
+
+            // Providers
+            services.AddSingleton<AwsSecretsManagerStore>();
+            services.AddSingleton<AzureKeyVaultSecretStore>();
+            services.AddSingleton<EnvironmentVariableSecretStore>();
+            // Optional: GoogleSecretManagerStore can be added similarly if present
+            // services.AddSingleton<GoogleSecretManagerStore>();
+
+            // Composite (dictionary + routing table from embedded resource)
+            services.AddSingleton<CompositeSecretStore>(sp =>
             {
-                case "AzureKeyVault":
+                var routing = CompositeSecretStore.LoadRoutingFromResource("Ark.App.Secrets.Resources.providers.json");
+                var providers = new Dictionary<string, ISecretStore>(StringComparer.OrdinalIgnoreCase)
                 {
-                    var url = configuration["Secrets:Azure:VaultUrl"];
-                    if (string.IsNullOrWhiteSpace(url)) throw new InvalidOperationException("Secrets:Azure:VaultUrl is required.");
-                    services.AddSingleton<ISecretStore>(_ => new AzureKeyVaultSecretStore(new Uri(url)));
-                    break;
-                }
-                case "AwsSecretsManager":
-                {
-                    services.AddAWSService<Amazon.SecretsManager.IAmazonSecretsManager>();
-                    services.AddSingleton<ISecretStore, AwsSecretsManagerStore>();
-                    break;
-                }
-                case "GoogleSecretManager":
-                {
-                    var projectId = configuration["Secrets:Google:ProjectId"];
-                    if (string.IsNullOrWhiteSpace(projectId)) throw new InvalidOperationException("Secrets:Google:ProjectId is required.");
-                    services.AddSingleton<ISecretStore>(_ => new GoogleSecretManagerStore(projectId));
-                    break;
-                }
-                case "Environment":
-                default:
-                {
-                    services.AddSingleton<ISecretStore, EnvironmentVariableSecretStore>();
-                    break;
-                }
-            }
+                    ["aws"] = sp.GetRequiredService<AwsSecretsManagerStore>(),
+                    ["azure"] = sp.GetRequiredService<AzureKeyVaultSecretStore>(),
+                    ["env"] = sp.GetRequiredService<EnvironmentVariableSecretStore>()
+                };
+                // If you register GCP, uncomment:
+                // providers["gcp"] = sp.GetRequiredService<GoogleSecretManagerStore>();
+                return new CompositeSecretStore(providers, routing);
+            });
 
-            if (bool.TryParse(configuration["Secrets:UseEnvFallbackOnGet"], out var useFallback) && useFallback)
-            {
-                // Wrap with a composite that falls back to environment on read miss.
-                var provider = services.BuildServiceProvider();
-                var primary = provider.GetRequiredService<ISecretStore>();
-                var fallback = new EnvironmentVariableSecretStore();
-                services.AddSingleton<ISecretStore>(_ => new CompositeSecretStore(primary, fallback));
-            }
+            // Unified abstraction
+            services.AddSingleton<ISecretStore>(sp => sp.GetRequiredService<CompositeSecretStore>());
 
+            // Cache and manager (example manager that depends on ISecretStore + IMemoryCache)
             services.AddMemoryCache();
-            services.AddSingleton<SecretsManager>(sp =>
-                new SecretsManager(sp.GetRequiredService<ISecretStore>(), sp.GetRequiredService<IMemoryCache>(), sp.GetService<Microsoft.Extensions.Logging.ILogger<SecretsManager>>())
-            );
+            services.AddSingleton<SecretsManager>();
 
             return services;
         }
+        #endregion Methods
     }
 }

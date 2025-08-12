@@ -7,7 +7,21 @@ namespace Ark.App.Secrets.Typed
     /// </summary>
     public static class TypedSecrets
     {
-        // --------- Base providers ---------
+        #region Fields
+        #endregion
+
+        #region Ctors
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Private Methods
+        #endregion
+
 
         /// <summary>Bloomberg MarketData secrets bundle.</summary>
         public sealed record BloombergMarketDataSecrets(string ApiKey, string ApiSecret, string EndpointUrl);

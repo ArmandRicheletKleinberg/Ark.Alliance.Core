@@ -9,7 +9,15 @@ namespace Ark.App.Secrets.Services;
 /// </summary>
 public class SecretsProvider : ISecretsProvider
 {
+        #region Fields
+   
+
     private readonly SecretsOptions _options;
+    #endregion
+
+
+    #region Public Methods
+   
 
     /// <summary>
     /// + Initializes the provider with configured options.
@@ -32,4 +40,6 @@ public class SecretsProvider : ISecretsProvider
 
     /// <inheritdoc />
     public ServiceSecretOptions DeepSeek => _options.DeepSeek;
+
+    #endregion
 }

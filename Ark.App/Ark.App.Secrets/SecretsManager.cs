@@ -15,6 +15,21 @@ namespace Ark.App.Secrets
     /// </summary>
     public sealed class SecretsManager
     {
+        #region Fields
+        #endregion
+
+        #region Ctors
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Private Methods
+        #endregion
+
         private readonly ISecretStore _store;
         private readonly IMemoryCache _cache;
         private readonly ILogger<SecretsManager>? _logger;
@@ -46,7 +61,7 @@ namespace Ark.App.Secrets
             var canonical = key.ToCanonicalName();
             if (_cache.TryGetValue(canonical, out string? cached))
             {
-                return Result.Success<string?>(cached);
+                return new Result<string?>(cached);
             }
 
             var r = await _store.GetSecretAsync(canonical, ct).ConfigureAwait(false);
@@ -154,7 +169,7 @@ namespace Ark.App.Secrets
             }
             catch (Exception ex)
             {
-                return Result.Failure<IReadOnlyDictionary<string, string>>(ex.Message);
+                return new Result<IReadOnlyDictionary<string, string>>().WithStatus(ResultStatus.Failure).WithException(ex).WithReason(ex.Message);
             }
         }
 

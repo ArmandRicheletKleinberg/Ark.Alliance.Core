@@ -1,50 +1,101 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Ark;
 
 namespace Ark.App.Secrets.Stores
 {
     /// <summary>
-    /// Composite secret store: tries a primary store and falls back to another store for reads.
+    /// Routes secret operations to specific providers based on a prefix routing table.
     /// </summary>
-    public sealed class CompositeSecretStore : ISecretStore
+    public sealed class CompositeSecretStore : SecretStoreBase
     {
-        private readonly ISecretStore _primary;
-        private readonly ISecretStore _fallback;
+        #region Fields
+
+        private readonly IReadOnlyDictionary<string, ISecretStore> _providers;
+        private readonly RoutingTable _routing;
+
+        #endregion
+
+        #region Ctors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="CompositeSecretStore"/>.
+        /// Creates a new composite store.
         /// </summary>
-        /// <param name="primary">Primary store used for read/write.</param>
-        /// <param name="fallback">Fallback store used only when a value is missing.</param>
-        public CompositeSecretStore(ISecretStore primary, ISecretStore fallback)
+        /// <param name="providers">Map of provider keys (e.g. "aws") to concrete stores.</param>
+        /// <param name="routing">Routing table mapping key prefixes to provider keys.</param>
+        public CompositeSecretStore(IReadOnlyDictionary<string, ISecretStore> providers, RoutingTable routing)
         {
-            _primary = primary;
-            _fallback = fallback;
+            _providers = providers ?? throw new ArgumentNullException(nameof(providers));
+            _routing = routing ?? throw new ArgumentNullException(nameof(routing));
         }
 
+        #endregion
+
+        #region Public Overrides
+
         /// <inheritdoc />
-        public async Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
+        public override Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
+            => Route(canonicalName).GetSecretAsync(canonicalName, ct);
+
+        /// <inheritdoc />
+        public override Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
+            => Route(canonicalName).SetSecretAsync(canonicalName, value, ct);
+
+        /// <inheritdoc />
+        public override Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
+            => Route(canonicalName).DeleteSecretAsync(canonicalName, ct);
+
+        /// <inheritdoc />
+        public override Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
+            => Route(canonicalFolderPrefix).ListByPrefixAsync(canonicalFolderPrefix, ct);
+
+        #endregion
+
+        #region Private Methods
+
+        private ISecretStore Route(string key)
         {
-            var r = await _primary.GetSecretAsync(canonicalName, ct).ConfigureAwait(false);
-            if (r.IsSuccess && r.Data is null)
+            if (_routing.PrefixToProvider is null || _routing.PrefixToProvider.Count == 0)
+                throw new InvalidOperationException("Routing table is empty.");
+            // Choose the longest matching prefix for deterministic routing
+            var match = _routing.PrefixToProvider.Keys
+                .OrderByDescending(k => k.Length)
+                .FirstOrDefault(prefix => key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+
+            if (match is null)
+                throw new InvalidOperationException($"No provider mapping found for key '{key}'.");
+
+            var providerKey = _routing.PrefixToProvider[match];
+            if (!_providers.TryGetValue(providerKey, out var store))
+                throw new InvalidOperationException($"Provider '{providerKey}' not found in provider map.");
+
+            return store;
+        }
+
+        #endregion
+
+        #region Static Helpers
+
+        /// <summary>
+        /// Loads the routing table JSON from an embedded resource.
+        /// </summary>
+        /// <param name="resourceName">Fully qualified resource name.</param>
+        public static RoutingTable LoadRoutingFromResource(string resourceName)
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            using var stream = asm.GetManifestResourceStream(resourceName)
+                               ?? throw new InvalidOperationException($"Embedded resource '{resourceName}' not found.");
+            var table = JsonSerializer.Deserialize<RoutingTable>(stream, new JsonSerializerOptions
             {
-                return await _fallback.GetSecretAsync(canonicalName, ct).ConfigureAwait(false);
-            }
-            return r;
+                PropertyNameCaseInsensitive = true
+            });
+            return table ?? new RoutingTable();
         }
 
-        /// <inheritdoc />
-        public Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
-            => _primary.SetSecretAsync(canonicalName, value, ct);
-
-        /// <inheritdoc />
-        public Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
-            => _primary.DeleteSecretAsync(canonicalName, ct);
-
-        /// <inheritdoc />
-        public Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
-            => _primary.ListByPrefixAsync(canonicalFolderPrefix, ct);
+        #endregion
     }
 }

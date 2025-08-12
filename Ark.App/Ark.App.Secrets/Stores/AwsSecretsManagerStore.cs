@@ -1,69 +1,77 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
-using Ark;
 
 namespace Ark.App.Secrets.Stores
 {
     /// <summary>
     /// AWS Secrets Manager backed store.
     /// </summary>
-    public sealed class AwsSecretsManagerStore : ISecretStore
+    public sealed class AwsSecretsManagerStore : SecretStoreBase
     {
+        #region Fields
         private readonly IAmazonSecretsManager _client;
+        #endregion
 
+        #region Ctors
         /// <summary>
-        /// Initializes the store using an injected <see cref="IAmazonSecretsManager"/> client.
+        /// Initializes the store with a given AWS Secrets Manager client.
         /// </summary>
-        /// <param name="client">AWS Secrets Manager client instance.</param>
         public AwsSecretsManagerStore(IAmazonSecretsManager client)
-        {
-            _client = client;
-        }
+            => _client = client ?? throw new ArgumentNullException(nameof(client));
+        #endregion
+
+        #region Public Overrides
 
         /// <inheritdoc />
-        public async Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
+        public override async Task<Result<string?>> GetSecretAsync(string canonicalName, CancellationToken ct = default)
         {
             try
             {
-                var req = new GetSecretValueRequest { SecretId = canonicalName };
-                var resp = await _client.GetSecretValueAsync(req, ct).ConfigureAwait(false);
-                if (!string.IsNullOrEmpty(resp.SecretString))
-                    return Result.Success<string?>(resp.SecretString);
-                if (resp.SecretBinary is not null)
-                    return Result.Success<string?>(Encoding.UTF8.GetString(resp.SecretBinary.ToArray()));
-                return Result.Success<string?>(null);
+                var resp = await _client.GetSecretValueAsync(new GetSecretValueRequest
+                {
+                    SecretId = canonicalName
+                }, ct).ConfigureAwait(false);
+
+                return new Result<string?>(resp.SecretString);
             }
-            catch (ResourceNotFoundException)
+            catch (ResourceNotFoundException ex)
             {
-                return Result.Success<string?>(null);
+                return new Result<string?>().WithException(ex);
             }
             catch (Exception ex)
             {
-                return Result.Failure<string?>(ex.Message);
+                return new Result<string?>().WithException(ex);
             }
         }
 
         /// <inheritdoc />
-        public async Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
+        public override async Task<Result> SetSecretAsync(string canonicalName, string value, CancellationToken ct = default)
         {
             try
             {
                 try
                 {
-                    var create = new CreateSecretRequest { Name = canonicalName, SecretString = value };
-                    await _client.CreateSecretAsync(create, ct).ConfigureAwait(false);
+                    // Try update (PutSecretValue) if secret exists
+                    await _client.PutSecretValueAsync(new PutSecretValueRequest
+                    {
+                        SecretId = canonicalName,
+                        SecretString = value
+                    }, ct).ConfigureAwait(false);
                 }
-                catch (ResourceExistsException)
+                catch (ResourceNotFoundException)
                 {
-                    var put = new PutSecretValueRequest { SecretId = canonicalName, SecretString = value };
-                    await _client.PutSecretValueAsync(put, ct).ConfigureAwait(false);
+                    // Create if not exists
+                    await _client.CreateSecretAsync(new CreateSecretRequest
+                    {
+                        Name = canonicalName,
+                        SecretString = value
+                    }, ct).ConfigureAwait(false);
                 }
-
                 return Result.Success;
             }
             catch (Exception ex)
@@ -73,16 +81,20 @@ namespace Ark.App.Secrets.Stores
         }
 
         /// <inheritdoc />
-        public async Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
+        public override async Task<Result> DeleteSecretAsync(string canonicalName, CancellationToken ct = default)
         {
             try
             {
-                await _client.DeleteSecretAsync(new DeleteSecretRequest { SecretId = canonicalName, ForceDeleteWithoutRecovery = true }, ct).ConfigureAwait(false);
+                await _client.DeleteSecretAsync(new DeleteSecretRequest
+                {
+                    SecretId = canonicalName,
+                    ForceDeleteWithoutRecovery = true
+                }, ct).ConfigureAwait(false);
                 return Result.Success;
             }
             catch (ResourceNotFoundException)
             {
-                return Result.Success;
+                return Result.Success; // idempotent
             }
             catch (Exception ex)
             {
@@ -91,10 +103,34 @@ namespace Ark.App.Secrets.Stores
         }
 
         /// <inheritdoc />
-        public Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
+        public override async Task<Result<IReadOnlyDictionary<string, string>>> ListByPrefixAsync(string canonicalFolderPrefix, CancellationToken ct = default)
         {
-            // Could implement via ListSecrets with client-side filtering and pagination.
-            return Task.FromResult(Result.Success((IReadOnlyDictionary<string, string>)new Dictionary<string, string>()));
+            try
+            {
+                var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                string? token = null;
+                do
+                {
+                    var resp = await _client.ListSecretsAsync(new ListSecretsRequest { NextToken = token }, ct).ConfigureAwait(false);
+                    foreach (var s in resp.SecretList ?? Enumerable.Empty<SecretListEntry>())
+                    {
+                        if (!string.IsNullOrEmpty(s.Name) && s.Name.StartsWith(canonicalFolderPrefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            var val = await GetSecretAsync(s.Name, ct).ConfigureAwait(false);
+                            if (val.IsSuccess && val.Data is not null) dict[s.Name] = val.Data;
+                        }
+                    }
+                    token = resp.NextToken;
+                } while (!string.IsNullOrEmpty(token));
+
+                return new Result<IReadOnlyDictionary<string, string>>(dict);
+            }
+            catch (Exception ex)
+            {
+                return new Result<IReadOnlyDictionary<string, string>>().WithException(ex);
+            }
         }
+
+        #endregion
     }
 }

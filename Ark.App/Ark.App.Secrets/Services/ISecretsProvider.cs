@@ -3,11 +3,13 @@ using Ark.App.Secrets.Options;
 namespace Ark.App.Secrets.Services;
 
 /// <summary>
-/// + Provides access to configured API secrets.
-/// - Exposes only read-only options.
+/// Exposes configured API secrets via strongly typed options.
+/// + Centralizes credential access for consuming services.
+/// - Offers read-only views without rotation capabilities.
 /// </summary>
 public interface ISecretsProvider
 {
+    #region Properties
     /// <summary>Gets Binance credentials.</summary>
     ServiceSecretOptions Binance { get; }
 
@@ -19,4 +21,5 @@ public interface ISecretsProvider
 
     /// <summary>Gets DeepSeek credentials.</summary>
     ServiceSecretOptions DeepSeek { get; }
+    #endregion Properties
 }
